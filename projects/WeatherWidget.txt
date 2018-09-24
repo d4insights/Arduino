@@ -1,0 +1,18 @@
+
+
+Video del proyecto
+
+https://youtu.be/NnS7sFmU-c4
+https://www.youtube.com/watch?v=9cCTp8aoWPs&t=198s
+
+
+
+
+Corrección de la librerias de Adafruit SDD1306
+
+https://www.youtube.com/watch?v=RpK7-Ljnpho
+
+
+
+LOLIN E32 - OLED SPI Weather Station
+https://www.youtube.com/watch?v=9cCTp8aoWPs
