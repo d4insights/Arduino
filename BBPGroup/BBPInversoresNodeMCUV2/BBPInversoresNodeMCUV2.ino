@@ -1,5 +1,6 @@
 // BBP Monitoreo de Inversores
 // Módulo NodeMCU ESP-12 E - Control de Conectividad, pantalla y registro en MySql
+// Guarda en la EEPROM los datos de conexión e IP donde va a guardar los datos (.php en el Apache del Server de BD)
 //
 //
 
