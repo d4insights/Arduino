@@ -3,6 +3,7 @@
 // Guarda en la EEPROM los datos de conexión e IP donde va a guardar los datos (.php en el Apache del Server de BD)
 //
 //
+//
 
 #include <Wire.h>
 #include "SH1106.h" 
@@ -13,9 +14,13 @@
 #include <WiFiClientSecure.h>
 #include <DNSServer.h>            //Local DNS Server used for redirecting all rs to the configuration portal
 #include <ESP8266WebServer.h>     //Local WebServer used to serve the configuration portal
-#include <ESP8266HTTPClient.h>    // Cliente para guardar registros en la base de datos
+#include <ESP8266HTTPClient.h>    //Cliente para guardar registros en la base de datos
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+#include <EEPROM.h>               //Para guardar los parámetros de conexión en la EEPROM de la ESP12
 
+
+
+#define BOT_TOKEN_LENGTH 46
 
 //Configuracion Multiplexor
 const int muxS0 = D3;
