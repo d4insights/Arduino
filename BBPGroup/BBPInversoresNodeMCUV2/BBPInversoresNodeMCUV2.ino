@@ -3,7 +3,7 @@
 //
 
 #include <Wire.h>
-#include "SH1106.h" //alias for `#include "SH1106Wire.h"`
+#include "SH1106.h" 
 #include "SH1106Brzo.h"
 #include "images.h"
 

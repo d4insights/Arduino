@@ -1,3 +1,3 @@
 # Arduino
 
-Repositorio de Proyectos y Librerías
+Repositorio de Proyectos y LibrerÃ­as
