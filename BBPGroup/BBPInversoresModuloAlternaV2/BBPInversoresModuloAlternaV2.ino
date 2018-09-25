@@ -1,3 +1,7 @@
+// BBP Monitoreo de Inversores
+// Módulo de lectura de baterías
+// 
+
 #include "EmonLib.h"
 #include <Wire.h>
 EnergyMonitor energyMonitor;
@@ -181,4 +185,3 @@ String aux = "";
    Serial.println(elemento); 
   }  
 }
-
