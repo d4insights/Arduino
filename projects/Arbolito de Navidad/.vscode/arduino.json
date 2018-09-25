@@ -1,0 +1,5 @@
+{
+    "board": "arduino:samd:mkr1000",
+    "sketch": "Arbolito_de_navidad\\Arbolito_de_navidad.ino",
+    "port": "COM4"
+}

@@ -1,0 +1,8 @@
+Required Components:
+
+1) Arduino UNO Board + USB Cable
+2) 8 LEDs
+3) 9 Resistors [220 Ohm]
+4) Pushbutton
+5) Jumper Wires
+6) Breadboard
