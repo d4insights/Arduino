@@ -1,9 +1,10 @@
 // BBP Monitoreo de Inversores
 // Módulo NodeMCU ESP-12 E - Control de Conectividad, pantalla y registro en MySql
 //
+//
 
 #include <Wire.h>
-#include "SH1106.h" //alias for `#include "SH1106Wire.h"`
+#include "SH1106.h" 
 #include "SH1106Brzo.h"
 #include "images.h"
 
