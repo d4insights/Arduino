@@ -19,22 +19,22 @@ void setup() {
 }
 
 void loop() {
-  if (Usuario == "") {
-    MySSID.write("WRT1900AC");
-    Serial.println("Usuario Guardado");
-  }
-  else{
+//  if (Usuario == "") {
+//    MySSID.write("WRT1900AC");
+//    Serial.println("SSID Guardada");
+//  }
+//  else{
     Serial.print(Usuario);
-    Serial.print("");  
-  }
-
-  if (Password == "") {
-    MyPWD.write("4CE9C5C6F6");
-    Serial.println("Passw0rd Guardada");
-  }
-  else{
+    Serial.println(" -> SSID Recupareda");  
+//  }
+//
+//  if (Password == "") {
+//    MyPWD.write("4CE9C5C6F6");
+//    Serial.println("Passw0rd Guardada");
+//  }
+//  else{
     Serial.print(Password);
-    Serial.print("");  
-  }
-
+    Serial.println(" -> PWD Recuperada");  
+//  }
+ delay(1000);
 }

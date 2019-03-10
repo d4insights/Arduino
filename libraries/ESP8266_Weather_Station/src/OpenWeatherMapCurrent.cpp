@@ -31,8 +31,16 @@ OpenWeatherMapCurrent::OpenWeatherMapCurrent() {
 }
 
 void OpenWeatherMapCurrent::updateCurrent(OpenWeatherMapCurrentData *data, String appId, String location) {
+  doUpdate(data, buildUrl(appId, "q=" + location));
+}
+
+void OpenWeatherMapCurrent::updateCurrentById(OpenWeatherMapCurrentData *data, String appId, String locationId) {
+  doUpdate(data, buildUrl(appId, "id=" + locationId));
+}
+
+String OpenWeatherMapCurrent::buildUrl(String appId, String locationParameter) {
   String units = metric ? "metric" : "imperial";
-  doUpdate(data, "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + appId + "&units=" + units + "&lang=" + language);
+  return "http://api.openweathermap.org/data/2.5/weather?" + locationParameter + "&appid=" + appId + "&units=" + units + "&lang=" + language;
 }
 
 void OpenWeatherMapCurrent::doUpdate(OpenWeatherMapCurrentData *data, String url) {
@@ -57,7 +65,7 @@ void OpenWeatherMapCurrent::doUpdate(OpenWeatherMapCurrentData *data, String url
 
     WiFiClient * client = http.getStreamPtr();
 
-    while(client->connected()) {
+    while(client->connected() || client->available()) {
       while((size = client->available()) > 0) {
 		if ((millis() - lost_do) > lostTest) {
 			Serial.println ("lost in client with a timeout");
@@ -72,6 +80,8 @@ void OpenWeatherMapCurrent::doUpdate(OpenWeatherMapCurrentData *data, String url
         if (isBody) {
           parser.parse(c);
         }
+        // give WiFi and TCP/IP libraries a chance to handle pending events
+        yield();
       }
     }
   }

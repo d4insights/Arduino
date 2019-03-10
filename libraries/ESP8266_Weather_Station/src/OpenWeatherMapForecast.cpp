@@ -31,9 +31,18 @@ OpenWeatherMapForecast::OpenWeatherMapForecast() {
 }
 
 uint8_t OpenWeatherMapForecast::updateForecasts(OpenWeatherMapForecastData *data, String appId, String location, uint8_t maxForecasts) {
-  String units = metric ? "metric" : "imperial";
   this->maxForecasts = maxForecasts;
-  return doUpdate(data, "http://api.openweathermap.org/data/2.5/forecast?q=" + location + "&appid=" + appId + "&units=" + units + "&lang=" + language);
+  return doUpdate(data, buildUrl(appId, "q=" + location));
+}
+
+uint8_t OpenWeatherMapForecast::updateForecastsById(OpenWeatherMapForecastData *data, String appId, String locationId, uint8_t maxForecasts) {
+  this->maxForecasts = maxForecasts;
+  return doUpdate(data, buildUrl(appId, "id=" + locationId));
+}
+
+String OpenWeatherMapForecast::buildUrl(String appId, String locationParameter) {
+  String units = metric ? "metric" : "imperial";
+  return "http://api.openweathermap.org/data/2.5/forecast?" + locationParameter + "&appid=" + appId + "&units=" + units + "&lang=" + language;
 }
 
 uint8_t OpenWeatherMapForecast::doUpdate(OpenWeatherMapForecastData *data, String url) {
@@ -59,7 +68,7 @@ uint8_t OpenWeatherMapForecast::doUpdate(OpenWeatherMapForecastData *data, Strin
 
     WiFiClient * client = http.getStreamPtr();
 
-    while(client->connected()) {
+    while(client->connected() || client->available()) {
       while((size = client->available()) > 0) {
 		if ((millis() - lost_do) > lostTest) {
 			Serial.println ("lost in client with a timeout");
@@ -74,6 +83,8 @@ uint8_t OpenWeatherMapForecast::doUpdate(OpenWeatherMapForecastData *data, Strin
         if (isBody) {
           parser.parse(c);
         }
+        // give WiFi and TCP/IP libraries a chance to handle pending events
+        yield();
       }
     }
   }
@@ -104,7 +115,7 @@ void OpenWeatherMapForecast::value(String value) {
     if (allowedHoursCount > 0) {
       time_t time = data[currentForecast].observationTime;
       struct tm* timeInfo;
-      timeInfo = localtime(&time);
+      timeInfo = gmtime(&time);
       uint8_t currentHour = timeInfo->tm_hour;
       for (uint8_t i = 0; i < allowedHoursCount; i++) {
         if (currentHour == allowedHours[i]) {
