@@ -1,0 +1,2 @@
+#define SECRET_SSID "CiscoE2500"
+#define SECRET_PASS "4CE9C5C6F6"

@@ -25,6 +25,8 @@
 #include "tools.h" 
 #include "smtp2Go.h" 
 #include "moduloAlterna.h" 
+#include "mySQL.h" 
+
 
 
 float lastVrms = 220;                 // Ultima lectura de la tensión para no reimprimir la OLED si no hace falta
@@ -49,7 +51,7 @@ void setup() {
  
   bool debugMode = true;                     // True: Hardcodea el Seteo SSID y PWD para que no lo pida cada vez que compilo  
   validacionModoDebug(debugMode);            // Confirmo si estoy en Producción o Desarrollo
-    
+
 }
 
 
@@ -57,21 +59,23 @@ void loop() {
   
   checkNetworkStatus();                   // Rutina de manejo de conexión y reenganche AP, Server Web o Cliente Web
 
-  actualizacionLectura(10);               // Pido al NANO que me mande la última lectura que tenga en una trama
+  actualizacionLectura(15);               // Pido al NANO que me mande la última lectura que tenga en una trama
 
   if(Vrms > 1000){                         // Hasta que estabilice la lectura porngo el waiting reading en la pantalla
     displayWaiting();
-  }
-  else{
-    
+  }else{
+  
       if(lastVrms != Vrms && Vrms < 500){
         displayTension(modoMKR1010, round(Vrms));
         Serial.print("Tensión -> ");  
         Serial.print(Vrms);
         Serial.print(" | ");
         Serial.print("Amperaje -> ");  
-        Serial.println(Irms);
+        Serial.print(Irms);
+        Serial.print(" | ");
         lastVrms = Vrms;
+        
+        guardarBaseDatos();                     // Mando el registro a guardar a la base de datos
         
         if(Vrms>215 && flagCorteTension == true){
             flagCorteTension = false;
@@ -148,8 +152,8 @@ void loop() {
             Serial.println(F("Email failed"));
         }
        }
-
   }
+
   
   // Rutina de manejo del LED de estado de la placa MKR1010
   if (millis() - previousMillis >= intervalFlashingLed) {
@@ -158,6 +162,6 @@ void loop() {
   }
 
   displayZocalo(modoMKR1010);
-  delay(1000);
+  delay(5000);
   
 }

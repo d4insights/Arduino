@@ -36,7 +36,7 @@ void loop()
       
       emon1.calcVI(20,2000);                 // Calculate all. No.of half wavelengths (crossings), time-out
       
-      Vrms = emon1.Vrms + 1.1;
+      Vrms = emon1.Vrms + 1.3;
       Irms = emon1.calcIrms(1484);
     
       //Filtro ruido
@@ -70,7 +70,7 @@ void generoTramaI2C(){
      }
    }
 
-    dataFileName = V + I;
+    dataFileName = V + I + "000";
     Serial.print("Lectura en: ");
     Serial.print(millis());
     Serial.print(" mS  || ");
@@ -86,7 +86,7 @@ void generoTramaI2C(){
 
 // function that executes whenever data is requested from master
 void requestEvent() {
- char __dataFileName[10];
+ char __dataFileName[15];
  dataFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
  Wire.write(__dataFileName);  /*send string on request */
 }
