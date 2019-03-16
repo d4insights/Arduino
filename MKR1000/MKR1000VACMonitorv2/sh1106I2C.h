@@ -96,7 +96,7 @@ void displayWaiting(){
   u8g2.setDrawColor(1);                        
   u8g2.setFontMode(1);                       
   u8g2.setFont(u8g2_font_helvB10_te);            
-  u8g2.drawStr(30,30,"Overflow..");                   
+  u8g2.drawStr(30,30,"Scanning..");                   
 
   u8g2.sendBuffer();                           // transfer internal memory to the display
 }
@@ -121,10 +121,13 @@ void displayZocalo(String texto){
 }
 
 
-void displayTension(String texto, unsigned int val){  
+void displayTensionMA(String texto, unsigned int valV, unsigned int valI){  
 
-  char buff[128];
-  strcpy(buff, u8x8_u8toa(val, 3));    /* convert m to a string with two digits */
+  char buffV[15];
+  strcpy(buffV, u8x8_u8toa(valV, 3));       /* convert m to a string with two digits */
+
+  char buffI[15];
+  strcpy(buffI, u8x8_u8toa(valI, 3));       /* convert m to a string with two digits */
   
   char modo[128];
   texto.toCharArray(modo,128);
@@ -132,8 +135,43 @@ void displayTension(String texto, unsigned int val){
   //u8g2.clear();   
   u8g2.clearBuffer();                    
   u8g2.setFontMode(1);                       
-  u8g2.setFont(u8g2_font_fub35_tn);            
-  u8g2.drawStr(20,43,buff);                        
+  //u8g2.setFont(u8g2_font_fub35_tn);   
+  u8g2.setFont(u8g2_font_fub17_tn);         
+  u8g2.drawStr(20,17,buffV);
+  u8g2.drawStr(20,43,buffI);  
+  u8g2.setFont(u8g2_font_cu12_te);
+  u8g2.drawStr(70,17,"Volts");
+  u8g2.drawStr(70,43,"mAmp");                      
+  u8g2.setFont(u8g2_font_6x10_tf);            
+  u8g2.drawStr(0,62,modo);                   
+  u8g2.setFont(u8g2_font_timR08_tr);            
+  u8g2.drawStr(114,62,"d4i");                
+  u8g2.drawHLine(0, 52, 128);                // Dibuja una línea horizontal               
+  u8g2.sendBuffer();                         // transfer internal memory to the display
+}
+
+
+void displayTensionA(String texto, unsigned int valV, unsigned int valI){  
+
+  char buffV[15];
+  strcpy(buffV, u8x8_u8toa(valV, 3));       /* convert m to a string with two digits */
+
+  char buffI[15];
+  strcpy(buffI, u8x8_u8toa(valI, 3));       /* convert m to a string with two digits */
+  
+  char modo[128];
+  texto.toCharArray(modo,128);
+  
+  //u8g2.clear();   
+  u8g2.clearBuffer();                    
+  u8g2.setFontMode(1);                       
+  //u8g2.setFont(u8g2_font_fub35_tn);   
+  u8g2.setFont(u8g2_font_fub17_tn);         
+  u8g2.drawStr(20,17,buffV);
+  u8g2.drawStr(20,43,buffI);  
+  u8g2.setFont(u8g2_font_cu12_te);
+  u8g2.drawStr(70,17,"Volts");
+  u8g2.drawStr(70,43,"Amper");                      
   u8g2.setFont(u8g2_font_6x10_tf);            
   u8g2.drawStr(0,62,modo);                   
   u8g2.setFont(u8g2_font_timR08_tr);            

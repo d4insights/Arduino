@@ -61,21 +61,24 @@ void loop() {
 
   actualizacionLectura(15);               // Pido al NANO que me mande la última lectura que tenga en una trama
 
-  if(Vrms > 1000){                         // Hasta que estabilice la lectura porngo el waiting reading en la pantalla
+  if(Vrms > 1000){                         // Hasta que estabilice la lectura pongo el "SCANNING..." en la pantalla
     displayWaiting();
   }else{
   
       if(lastVrms != Vrms && Vrms < 500){
-        displayTension(modoMKR1010, round(Vrms));
-        Serial.print("Tensión -> ");  
+        if(Irms>=0)
+              displayTensionMA(modoMKR1010, round(Vrms), round(Irms*1000));
+        else
+              displayTensionA(modoMKR1010, round(Vrms), round(Irms));
+        Serial.print("Volts -> ");  
         Serial.print(Vrms);
         Serial.print(" | ");
-        Serial.print("Amperaje -> ");  
+        Serial.print("Ampers -> ");  
         Serial.print(Irms);
         Serial.print(" | ");
         lastVrms = Vrms;
         
-        guardarBaseDatos();                     // Mando el registro a guardar a la base de datos
+        //guardarBaseDatos();                     // Mando el registro a guardar a la base de datos
         
         if(Vrms>215 && flagCorteTension == true){
             flagCorteTension = false;
@@ -90,7 +93,8 @@ void loop() {
             flagTensionNormalizada = true;
         } 
       }  
-    
+      
+      guardarBaseDatos();                     // Mando el registro a guardar a la base de datos
       
       
       // Mensaje de SUMINISTROS RESTABLECIDO
@@ -102,6 +106,21 @@ void loop() {
         if(sendEmail(smtpTO, smtpSubject, smtpText)){ 
             Serial.println(F("Email sent"));
             flagTensionNormalizada = false;
+        } else { 
+            Serial.println(F("Email failed"));
+        }
+      }
+
+
+      // Mensaje de BAJA TENSION
+      //
+      if(Vrms<=215 && flagBajaTension == false){
+        smtpTO      = "dfernandezsanz@itpatagonia.com";
+        smtpSubject = "BAJA TENSION";
+        smtpText    = "Estimado Usuario, \n\nLe queremos que hay una tensión por debajo de 200VAC.\n\nOjo con los aparatos que tengan motores!!.\n\nSaludos y suerte con eso";
+        if(sendEmail(smtpTO, smtpSubject, smtpText)){ 
+            Serial.println(F("Email sent"));
+            flagBajaTension = true;
         } else { 
             Serial.println(F("Email failed"));
         }
@@ -122,22 +141,7 @@ void loop() {
         }
       }
     
-    
-    
-      // Mensaje de BAJA TENSION
-      //
-      if(Vrms<=215 && flagBajaTension == false){
-        smtpTO      = "dfernandezsanz@itpatagonia.com";
-        smtpSubject = "BAJA TENSION";
-        smtpText    = "Estimado Usuario, \n\nLe queremos que hay una tensión por debajo de 200VAC.\n\nOjo con los aparatos que tengan motores!!.\n\nSaludos y suerte con eso";
-        if(sendEmail(smtpTO, smtpSubject, smtpText)){ 
-            Serial.println(F("Email sent"));
-            flagBajaTension = true;
-        } else { 
-            Serial.println(F("Email failed"));
-        }
-      }
-       
+     
     
       // Mensaje de ALTA TENSION
       //

@@ -36,7 +36,7 @@ void loop()
       
       emon1.calcVI(20,2000);                 // Calculate all. No.of half wavelengths (crossings), time-out
       
-      Vrms = emon1.Vrms + 1.3;
+      Vrms = emon1.Vrms + 1.45;
       Irms = emon1.calcIrms(1484);
     
       //Filtro ruido

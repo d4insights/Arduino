@@ -1,0 +1,145 @@
+/*
+ *    Librería de conexión y uso de la base de datos MYSQL
+ *    basado en el UBUNTU Server de AZURE
+ *    
+ *    Guarda mediante el puente con una rutina PHP que te abstrae del usuario y la clave de la base de datos por seguridad
+ *
+ *    guardarBaseDatos();
+ *    
+ *    Usa una trama del tipo GET de HTML  srvpoc.eastus.cloudapp.azure.com/VACMonitor/insert.php?IDSensor=1&VIN=100.01&IIN=2.02&PIN=1.01 
+ *    
+ *     
+ */
+
+ 
+char serverBD[] = "srvpoc.eastus.cloudapp.azure.com";   // Servidor de BD
+
+unsigned long ultimoRegistroDB = 60000;                 // Auxiliar para manejo del períod de tiempo entre registros
+long intervalRegistroBD        = 60000;                 // Manejo del período de tiempo entre grabaciones en la BDatos
+
+WiFiClient client;
+
+
+// Busca en la base de datos un parametro especificado por IDDispositivo + Parametro
+// Devuelve un String con el valor
+String leerParametroBD(String IDD, String PAR){
+
+  String RTA = "";
+  char CadenaInstrucc[500];           // OJO QUE SI NO TE ALCANZA LA DIMENSION PARA GUARDAR EL STRING EL PROGRAMA EXPLOTA POR EL WATCHDOG DE LA ESP
+    
+  String Instruccion = "/VACMonitor/select.php";
+  Instruccion.concat("?IDDispositivo=");
+  Instruccion.concat(IDD);
+  Instruccion.concat("&Parametro=");
+  Instruccion.concat(PAR);    
+  Instruccion.concat(" ");
+
+  Instruccion.toCharArray(CadenaInstrucc,Instruccion.length());
+
+  // Conecto al Server de BASE DE DATOS      
+  //Serial.println("\nStarting connection to server...");
+  if (client.connect(serverBD, 80)) {
+    //Serial.println("connected to server");
+    
+    // Genero el HTTP request:
+    client.print("GET ");
+    client.print(CadenaInstrucc);
+    //Serial.print(CadenaInstrucc);
+    
+    client.println(" HTTP/1.1");
+    client.print("Host: ");
+    client.println(serverBD);
+    client.println("Connection: close");
+    client.println();
+  }
+
+  delay(600);  // Delay necesario para que la pagina web responda    
+  
+  // Recupero lo que me desponda el servidor
+  while (client.available()) {
+    char c = client.read();
+    //Serial.print(c);
+    RTA += c;    
+  }
+  
+  // Desconecto el cliente
+  if (!client.connected()) {
+    //Serial.println();
+    //Serial.println("disconnecting from server.");
+    client.stop();
+  }
+
+  
+  RTA = RTA.substring(RTA.indexOf("Valor=")+6,RTA.indexOf("||"));
+  //Serial.println(RTA);
+  
+  if(RTA=="")
+      RTA="Error al recuperar el parametro..";
+      
+  return RTA;
+}
+
+
+/*
+// Guardo en la base de datos
+// Devuelve un int que representa la cantidad de caracteres de respuesta de la página si es 0 no había Internet
+int guardarBaseDatos(){
+
+ if (millis() - ultimoRegistroDB >= intervalRegistroBD) {
+    int rta = 0;
+    ultimoRegistroDB = millis();
+  
+    char CadenaInstrucc[500];           // OJO QUE SI NO TE ALCANZA LA DIMENSION PARA GUARDAR EL STRING EL PROGRAMA EXPLOTA POR EL WATCHDOG DE LA ESP
+    
+    String Instruccion = "/VACMonitor/insert.php";
+    Instruccion.concat("?IDSensor=");
+    Instruccion.concat(001);
+    Instruccion.concat("&VIN=");
+    Instruccion.concat(String(Vrms,2)); 
+    Instruccion.concat("&IIN=");
+    Instruccion.concat(String(Irms,2));
+    Instruccion.concat("&PIN=");
+    Instruccion.concat(String((Vrms*Irms),2));
+            
+    Instruccion.concat(" ");
+    
+    Instruccion.toCharArray(CadenaInstrucc,Instruccion.length());
+    
+    // Conecto al Server de BASE DE DATOS      
+    //Serial.println("\nStarting connection to server...");
+    if (client.connect(serverBD, 80)) {
+      //Serial.println("connected to server");
+      
+      // Genero el HTTP request:
+      client.print("GET ");
+      client.print(CadenaInstrucc);
+      Serial.print(CadenaInstrucc);
+      //client.print("/VACMonitor/insert.php?IDSensor=1&VIN=100.01&IIN=2.02&PIN=1.01 ");
+      client.println(" HTTP/1.1");
+      client.print("Host: ");
+      client.println(serverBD);
+      client.println("Connection: close");
+      client.println();
+    }
+
+    delay(300);  // Delay necesario para que la pagina web responda    
+    
+    // Recupero lo que me desponda el servidor
+    while (client.available()) {
+      char c = client.read();
+      Serial.print(c);
+      rta++;
+    }
+    
+    // Desconecto el cliente
+    if (!client.connected()) {
+      //Serial.println();
+      //Serial.println("disconnecting from server.");
+      client.stop();
+    }
+  }
+  
+  Serial.println();
+  return rta;
+}
+*/

@@ -22,6 +22,7 @@
 #include "sh1106I2C.h" 
 #include "tools.h" 
 #include "smtp2Go.h" 
+#include "mySQL.h" 
 
 
 void setup() {               
@@ -29,7 +30,7 @@ void setup() {
   
   startOled();                         // Inicia la pantalla OLED sh1106 y Splash Window de d4i 
   pinMode(LED_BUILTIN, OUTPUT);        // Uso el led builtin para señalar estado de actividad 
-  intervalFlashingLed = 3000;          // Intervalo para prender y apagar el Led de la Placa
+  //intervalFlashingLed = 3000;          // Intervalo para prender y apagar el Led de la Placa
   Serial.begin(115200);
   
   Serial.println("Aplication Start....."); 
@@ -45,7 +46,9 @@ void loop() {
   checkNetworkStatus();                   // Rutina de manejo de conexión y reenganche AP, Server Web o Cliente Web
   
 
-
+  testInternetConnection("www.d4insights.com");
+     
+   
 
   //Rutina de email 
   //
@@ -53,6 +56,9 @@ void loop() {
   smtpSubject = "MKR1010 SMTP auto sender...";
   smtpText    = "Estimado Usuario, \n\nEste es un mensaje automatico para notificar un evento del MKR1010.\nCualquier cosa no dude en resolverlo.\n\nSaludos!!";
   
+  
+  // Mando un mail de prueba si el usuario introduce "e" en elMonitor serial como input
+  //
   byte inChar;
   inChar = Serial.read();  
   if(inChar == 'e')
@@ -64,13 +70,8 @@ void loop() {
   }
 
 
-  
-  // Rutina de manejo del LED de estado de la placa MKR1010
-  if (millis() - previousMillis >= intervalFlashingLed) {
-      previousMillis = millis();
-      digitalWrite(LED_BUILTIN, ledBuiltInStatus=!ledBuiltInStatus);
-  }
+  ledFlashing(3000);                  // Flashing del LedBuitIn de la placa cada n milisegundos
+  displayFooter(modoMKR1010);         // Imprime el estado en el Footer de la pantallita OLED
 
-  
-  displayFooter(modoMKR1010);        // Imprime el estado en el Footer de la pantallita OLED
+  delay(20000);                       // Sacar esto.. solo lo puse por el ejemplo
 }

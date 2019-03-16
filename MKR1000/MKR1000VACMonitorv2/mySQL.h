@@ -53,10 +53,13 @@ void guardarBaseDatos(){
       Serial.print(CadenaInstrucc);
       //client.print("/VACMonitor/insert.php?IDSensor=1&VIN=100.01&IIN=2.02&PIN=1.01 ");
       client.println(" HTTP/1.1");
-      client.println("Host: srvpoc.eastus.cloudapp.azure.com");
+      client.print("Host: ");
+      client.println(serverBD);
       client.println("Connection: close");
       client.println();
     }
+
+    delay(200);           // Este delay es necesario para que la pagina responda
     
     // Recupero lo que me desponda el servidor
     while (client.available()) {

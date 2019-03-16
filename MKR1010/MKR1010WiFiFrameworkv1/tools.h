@@ -18,7 +18,7 @@ typedef struct {
 
 bool ledBuiltInStatus           = LOW;
 unsigned long previousMillis    = 0;  
-long intervalFlashingLed        = 0;
+//long intervalFlashingLed        = 0;
 
 
 // Reservo un espacio de memoria flash y creo objeto credenciales 
@@ -387,5 +387,14 @@ void validacionModoDebug(bool modo){
     credenciales.valid  = true;
   } else {
     credenciales = my_flash_store.read();    // Recupero el contenido de la FlashStorage
+  }  
+}
+
+
+// Rutina de manejo del LED de estado de la placa MKR1010
+void ledFlashing(long interval){
+  if (millis() - previousMillis >= interval) {
+      previousMillis = millis();
+      digitalWrite(LED_BUILTIN, ledBuiltInStatus=!ledBuiltInStatus);
   }  
 }
