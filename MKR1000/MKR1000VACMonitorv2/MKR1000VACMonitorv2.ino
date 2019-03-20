@@ -27,7 +27,7 @@
 #include "moduloAlterna.h" 
 #include "mySQL.h" 
 
-
+bool debugMode = false;               // True: Hardcodea el Seteo SSID y PWD para que no lo pida cada vez que compilo  
 
 float lastVrms = 220;                 // Ultima lectura de la tensión para no reimprimir la OLED si no hace falta
 bool flagCorteTension = false;        // false es que no estaba cortada la luz (estado para no mandar mil mails)
@@ -49,7 +49,7 @@ void setup() {
   wifiOled();                                // Loguito de WIFI
   validacionHardwareFirmaware();
  
-  bool debugMode = true;                     // True: Hardcodea el Seteo SSID y PWD para que no lo pida cada vez que compilo  
+
   validacionModoDebug(debugMode);            // Confirmo si estoy en Producción o Desarrollo
 
 }
@@ -166,6 +166,6 @@ void loop() {
   }
 
   displayZocalo(modoMKR1010);
-  delay(5000);
+  //delay(1000);
   
 }

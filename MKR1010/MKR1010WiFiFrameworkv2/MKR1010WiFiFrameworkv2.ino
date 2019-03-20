@@ -26,19 +26,21 @@
 #include "mySQL.h" 
 #include "rtcWiFiTime.h" 
 
+bool debugMode = true;                // True: Hardcodea el Seteo SSID y PWD para que no lo pida cada vez que compilo  
+
 void setup() {               
   delay(100);
   rtc.begin();                         // Inicio el reloj de tiempo real  
   
   startOled();                         // Inicia la pantalla OLED sh1106 y Splash Window de d4i 
   pinMode(LED_BUILTIN, OUTPUT);        // Uso el led builtin para señalar estado de actividad 
-  //intervalFlashingLed = 3000;          // Intervalo para prender y apagar el Led de la Placa
+  //intervalFlashingLed = 3000;        // Intervalo para prender y apagar el Led de la Placa
   Serial.begin(115200);
   
   Serial.println("Aplication Start....."); 
   wifiOled();                                // Loguito de WIFI
   validacionHardwareFirmaware();
-  bool debugMode = true;                     // True: Hardcodea el Seteo SSID y PWD para que no lo pida cada vez que compilo  
+ 
   validacionModoDebug(debugMode);            // Confirmo si estoy en Producción o Desarrollo
 
 }
@@ -49,10 +51,10 @@ void loop() {
   
 
 
-  // Rutina de chequeo de servicio de Internet disponible (mas allá de tener WiFi)
-  if(!testInternetConnection("www.d4insights.com")){
-        Serial.println("No tengo Internet.. qué hacemos???");  
-  }
+//  // Rutina de chequeo de servicio de Internet disponible (mas allá de tener WiFi)
+//  if(!testInternetConnection("www.d4insights.com")){
+//        Serial.println("No tengo Internet.. qué hacemos???");  
+//  }
   
 
   // Rutina de Actualización y display del Reloj
@@ -64,7 +66,7 @@ void loop() {
 
   // Rutina para leer una parametro desde la Base de Datos
   // Requiere, nombre del Dispositivo y el paramreo a buscar
-  Serial.println(leerParametroBD("MKRGSM1400Desa", "mailAlertas"));
+  //Serial.println(leerParametroBD("MKRGSM1400Desa", "mailAlertas"));
 
 
   //Rutina de email 
@@ -90,5 +92,5 @@ void loop() {
   ledFlashing(3000);                  // Flashing del LedBuitIn de la placa cada n milisegundos
   displayFooter(modoMKR1010);         // Imprime el estado en el Footer de la pantallita OLED
 
-  delay(20000);                       // Sacar esto.. solo lo puse por el ejemplo
+  delay(10000);                       // Sacar esto.. solo lo puse por el ejemplo
 }
