@@ -13,12 +13,14 @@
 #endif
 
 // Definición de las variables de ICONOS de Estados del HEADER
-String modoMKR1400 = "Disconnected";      // Mensaje general
-bool iconAlerta    = false;               // Alerte true or false
-String iconSMS     = "";                  // Mail OUT, IN o vacio para que no aparezca
-bool iconSincro    = false;               // Sincronización con Internet true or false
-bool iconSenal     = false;               // Señal de 4G true or false
-bool iconBateria   = true;                // Batería true or false
+String modoMKR1400    = "4g disconnected";       // Mensaje general
+bool iconAlerta       = false;                   // Alerte true or false
+String iconSMS        = "";                      // Mail OUT, IN o vacio para que no aparezca
+bool iconSincro       = false;                   // Sincronización con Internet true or false
+int iconSenal         = 0;                       // Señal de 4G true or false Varía entre 0 y 31 (mejor)
+float iconBateria     = 0;                       // Voltaje de la Batería auxiliar del MKR1400
+float lastIconBateria = 0;                       // Memoriza ultima lectura de bateria para no hacer un display si no cambio el valor
+
 
 
 /*
@@ -121,36 +123,6 @@ static const unsigned char bbp_Logo_bits[] U8X8_PROGMEM = {
 
 
 
-// LOGO WiFi
-#define WiFi_Logo_width 60
-#define WiFi_Logo_height 36
-static const unsigned char WiFi_Logo_bits[] U8X8_PROGMEM = {
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xFF, 0x07, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0xE0, 0xFF, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0xFF,
-  0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFF, 0xFF, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0xFE, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
-  0xFF, 0x03, 0x00, 0x00, 0x00, 0xFC, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00,
-  0x00, 0xFF, 0xFF, 0xFF, 0x07, 0xC0, 0x83, 0x01, 0x80, 0xFF, 0xFF, 0xFF,
-  0x01, 0x00, 0x07, 0x00, 0xC0, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x0C, 0x00,
-  0xC0, 0xFF, 0xFF, 0x7C, 0x00, 0x60, 0x0C, 0x00, 0xC0, 0x31, 0x46, 0x7C,
-  0xFC, 0x77, 0x08, 0x00, 0xE0, 0x23, 0xC6, 0x3C, 0xFC, 0x67, 0x18, 0x00,
-  0xE0, 0x23, 0xE4, 0x3F, 0x1C, 0x00, 0x18, 0x00, 0xE0, 0x23, 0x60, 0x3C,
-  0x1C, 0x70, 0x18, 0x00, 0xE0, 0x03, 0x60, 0x3C, 0x1C, 0x70, 0x18, 0x00,
-  0xE0, 0x07, 0x60, 0x3C, 0xFC, 0x73, 0x18, 0x00, 0xE0, 0x87, 0x70, 0x3C,
-  0xFC, 0x73, 0x18, 0x00, 0xE0, 0x87, 0x70, 0x3C, 0x1C, 0x70, 0x18, 0x00,
-  0xE0, 0x87, 0x70, 0x3C, 0x1C, 0x70, 0x18, 0x00, 0xE0, 0x8F, 0x71, 0x3C,
-  0x1C, 0x70, 0x18, 0x00, 0xC0, 0xFF, 0xFF, 0x3F, 0x00, 0x00, 0x08, 0x00,
-  0xC0, 0xFF, 0xFF, 0x1F, 0x00, 0x00, 0x0C, 0x00, 0x80, 0xFF, 0xFF, 0x1F,
-  0x00, 0x00, 0x06, 0x00, 0x80, 0xFF, 0xFF, 0x0F, 0x00, 0x00, 0x07, 0x00,
-  0x00, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0xF8, 0xFF, 0xFF,
-  0xFF, 0x7F, 0x00, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0x01, 0x00, 0x00,
-  0x00, 0x00, 0xFC, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0xFF,
-  0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0xFF, 0x1F, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x80, 0xFF, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  };
-
 
 void displayBorraPantallaCompleta(){
   u8g2.clear();   
@@ -173,16 +145,15 @@ void displayBorraHeaderPantalla(){
 }
 
 void displayWaitingStartUP(){
-
   displayBorraBodyPantalla();
   u8g2.setFont( u8g2_font_helvB08_tf);          
-  u8g2.drawStr(9,35,"Starting up services..");      
+  u8g2.drawStr(9,35,"Starting up services...");      
   u8g2.sendBuffer();   
   
   
 }
 
-void displayHeader(String texto, bool alerta, String sms, bool sincro, bool senal, bool bateria){  
+void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal, float bateria){  
    
   char buff[128];
   texto.toCharArray(buff,128);
@@ -224,23 +195,70 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, bool sena
   }
 
   // ICONO de Señal del Celular
-  if(senal){
-    u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
-    u8g2.drawStr(111,8,"F");                            // señal celular         
-  } else {
+  if (senal <= 0){
     u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
     u8g2.drawStr(111,8,"F");                            // señal celular tachada
     u8g2.drawLine(111, 0, 118, 8); 
   }
+  if(senal > 0 && senal <=10){
+    u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
+    u8g2.drawStr(111,8,"F");                            // señal celular UNA RAYITA    
+    u8g2.setDrawColor(0);
+    u8g2.drawBox(113,0,6,8);
+    u8g2.setDrawColor(1);             
+  } 
+  
+  if (senal > 10 && senal <=20){
+    u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
+    u8g2.drawStr(111,8,"F");                            // señal celular DOS RAYITAS    
+    u8g2.setDrawColor(0);
+    u8g2.drawBox(115,0,4,8);
+    u8g2.setDrawColor(1);
+  }
+
+  if (senal > 20 && senal <=25){
+    u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
+    u8g2.drawStr(111,8,"F");                            // señal celular TRES RAYITAS   
+    u8g2.setDrawColor(0);
+    u8g2.drawBox(117,0,2,8);
+    u8g2.setDrawColor(1); 
+  }
+
+  if (senal > 25){
+    u8g2.setFont(u8g2_font_open_iconic_other_1x_t);
+    u8g2.drawStr(111,8,"F");                            // señal celular CUATRO RAYITAS    
+  }
 
   // ICONO de Nivel de Bateria
-  if(bateria){
+  if(bateria <= 2.7){
+    u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
+    u8g2.drawStr(120,8,"@");                            // batería vacía
+    u8g2.drawLine(120, 0, 128, 8); 
+  } 
+
+  if(bateria > 2.7 && bateria <= 3.4){
+    u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
+    u8g2.drawStr(120,8,"@");                            // batería 25%
+    u8g2.drawBox(120,2,2,4);
+  }
+
+  if(bateria > 3.4 && bateria <= 3.8){
+    u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
+    u8g2.drawStr(120,8,"@");                            // batería 50%
+    u8g2.drawBox(120,2,3,4);
+  }
+
+  if(bateria > 3.8 && bateria <= 4.10){
+    u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
+    u8g2.drawStr(120,8,"@");                            // batería 75%
+    u8g2.drawBox(120,2,5,4);
+  }
+    
+  if (bateria > 4.10){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"I");                            // batería llena
-  } else {
-    u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
-    u8g2.drawStr(120,8,"@");                            // batería baja
   }
+
 
   u8g2.drawHLine(0, 10, 128);                 // Dibuja una línea horizontal
   u8g2.sendBuffer();                          // transfer internal memory to the display
@@ -275,10 +293,8 @@ void drawImagebbp() {
    u8g2.setFont( u8g2_font_helvB08_tf);          
    u8g2.drawStr(37,59,"BBP Group");      
    u8g2.sendBuffer();   
-   //delay(1000); 
+    
 }
-
-
 
 
 void displayReloj(String dia, String hora){   
@@ -298,4 +314,25 @@ void displayReloj(String dia, String hora){
   u8g2.drawStr(36,64,cHora);                   
 
   u8g2.sendBuffer();                           // transfer internal memory to the display
+}
+
+void displayBateryLevel(float iconBateria){
+
+  if(lastIconBateria != iconBateria){
+    char volts[10];
+    String aux= String(iconBateria);
+    aux.toCharArray(volts,10);
+    
+    displayBorraBodyPantalla();
+
+    u8g2.setFontMode(1);   
+    u8g2.setFont(u8g2_font_helvB08_tf);   
+    u8g2.drawStr(10,40,"Li-Po");
+    u8g2.drawStr(10,50,"Batery");
+    u8g2.drawStr(119,50,"v");
+    u8g2.drawLine(55, 30, 55, 55); 
+    u8g2.setFont(u8g2_font_fub17_tn);   
+    u8g2.drawStr(70,50,volts);
+    u8g2.sendBuffer();         
+  }
 }

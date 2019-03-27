@@ -18,8 +18,8 @@ GSMClient client;                                     // Objeto Cliente GSM
 
 GPRS gprs;                                            // Objeto Conexión (APN)
 GSM gsmAccess;                                        // Objeto Autenticación de GSM
-
-
+GSMScanner scannerNetworks;                           // Objeto de manejo de las redes para saber a cual me conecto
+GSMModem modem;                                       // Objeto Modem sirve para conocer el IMEI
 
 
 // Apaga el modem que es equivalente a apagar el celular 
@@ -36,6 +36,12 @@ void modemDisconect(){
 // Conexión al APN
 //
 void modemConnect(){
+
+  //Serial.println("GSM networks scanner starting up..");
+  scannerNetworks.begin();
+
+  //Serial.println("GSM Modem starting up..");
+  //modem.begin();
   
   // Inicaliza el modem GSM.begin() y loguea a la red de GPRS mediante el APN (usuario y password)
   Serial.println("Conecting to a Server ..");
@@ -43,18 +49,31 @@ void modemConnect(){
     if ((gsmAccess.begin(PINNUMBER) == GSM_READY) && (gprs.attachGPRS(GPRS_APN, GPRS_LOGIN, GPRS_PASSWORD) == GPRS_READY)) {
       gsmConnected = true;
       Serial.println("APN Connected.. OK");
-      iconSenal = true;
-      modoMKR1400 = "APN Connected";
+      //iconSenal = true;
+      //modoMKR1400 = "APN Connected";
       
-      //GSMModem modem;                         // Ejemplo para levantar el IMEI del modem
-      //modem.begin();
-      //modoMKR1400 = modem.getIMEI();
+      //modoMKR1400 = modem.getIMEI();          // Tira el nro de IMEI de la SIM
+  
+      // currently connected carrier
+      modoMKR1400 = scannerNetworks.getCurrentCarrier();
+      Serial.print("Current carrier: ");
+      Serial.println(modoMKR1400);
+      
+    
+      // returns strength and ber
+      // signal strength in 0-31 scale. 31 means power > 51dBm
+      // BER is the Bit Error Rate. 0-7 scale. 99=not detectable
+      iconSenal = (scannerNetworks.getSignalStrength()).toInt();
+      Serial.print("Signal Strength: ");
+      Serial.print(iconSenal);
+      Serial.println(" [0-31]");
+  
 
     } else {
       gsmConnected = false;
       Serial.println("APN Connection error!!");
-      iconSenal = false;
-      modoMKR1400 = "APN Disconnected";
+      iconSenal = 0;
+      modoMKR1400 = "4g disconnected";
       delay(1000);
     }
   }
