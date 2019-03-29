@@ -132,7 +132,7 @@ void displayBorraPantallaCompleta(){
 
 void displayBorraBodyPantalla(){
   u8g2.setDrawColor(0);
-  u8g2.drawBox(0,11,128,51);
+  u8g2.drawBox(0,11,128,53);
   u8g2.setDrawColor(1);          
   u8g2.sendBuffer(); 
 }
@@ -147,7 +147,11 @@ void displayBorraHeaderPantalla(){
 void displayWaitingStartUP(){
   displayBorraBodyPantalla();
   u8g2.setFont( u8g2_font_helvB08_tf);          
-  u8g2.drawStr(9,35,"Starting up services...");      
+  u8g2.drawStr(9,40,"Starting up services...");      
+  u8g2.setFont(u8g2_font_timR08_tr);            
+  u8g2.drawStr(114,62,"d4");
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(124,63,"i"); 
   u8g2.sendBuffer();   
   
   
@@ -291,9 +295,13 @@ void drawImagebbp() {
    u8g2.clear();                           
    u8g2.drawXBMP(24, 7, bbp_Logo_width, bbp_Logo_height, bbp_Logo_bits); 
    u8g2.setFont( u8g2_font_helvB08_tf);          
-   u8g2.drawStr(37,59,"BBP Group");      
+   u8g2.drawStr(37,55,"BBP Group");      
+   u8g2.setFont(u8g2_font_timR08_tr);            
+   u8g2.drawStr(114,62,"d4");
+   u8g2.setFont(u8g2_font_5x7_tf);
+   u8g2.drawStr(124,63,"i"); 
    u8g2.sendBuffer();   
-    
+   delay(2000); 
 }
 
 
@@ -317,7 +325,10 @@ void displayReloj(String dia, String hora){
 }
 
 void displayBateryLevel(float iconBateria){
-
+  
+  if(iconBateria < 1.0)
+    iconBateria = 0.0;
+  
   if(lastIconBateria != iconBateria){
     char volts[10];
     String aux= String(iconBateria);
@@ -326,13 +337,15 @@ void displayBateryLevel(float iconBateria){
     displayBorraBodyPantalla();
 
     u8g2.setFontMode(1);   
-    u8g2.setFont(u8g2_font_helvB08_tf);   
-    u8g2.drawStr(10,40,"Li-Po");
-    u8g2.drawStr(10,50,"Batery");
-    u8g2.drawStr(119,50,"v");
-    u8g2.drawLine(55, 30, 55, 55); 
+    u8g2.setFont(u8g2_font_6x10_tf);   
+    u8g2.drawStr(5,40,"Internal");
+    u8g2.drawStr(5,50,"Battery");
+    u8g2.drawStr(120,50,"v");
+    u8g2.drawLine(60, 25, 60, 55); 
     u8g2.setFont(u8g2_font_fub17_tn);   
     u8g2.drawStr(70,50,volts);
     u8g2.sendBuffer();         
+    lastIconBateria = iconBateria;
+    
   }
 }

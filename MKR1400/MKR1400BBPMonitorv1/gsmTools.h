@@ -22,13 +22,14 @@ GSMScanner scannerNetworks;                           // Objeto de manejo de las
 GSMModem modem;                                       // Objeto Modem sirve para conocer el IMEI
 
 
+
 // Apaga el modem que es equivalente a apagar el celular 
 //
 void modemDisconect(){
   gsmConnected = false;
   Serial.println();
   Serial.println("Shutdown the modem ..");
-  iconSenal = false;
+  iconSenal = 0;
   gsmAccess.shutdown();
 }
 
@@ -36,7 +37,6 @@ void modemDisconect(){
 // Conexión al APN
 //
 void modemConnect(){
-
   //Serial.println("GSM networks scanner starting up..");
   scannerNetworks.begin();
 
@@ -52,7 +52,7 @@ void modemConnect(){
       //iconSenal = true;
       //modoMKR1400 = "APN Connected";
       
-      //modoMKR1400 = modem.getIMEI();          // Tira el nro de IMEI de la SIM
+      //modoMKR1400 = modem.getIMEI();          // Recupera el nro de IMEI de la SIM
   
       // currently connected carrier
       modoMKR1400 = scannerNetworks.getCurrentCarrier();
@@ -104,9 +104,10 @@ bool testConnection(){
     clientT.println(serverTest);
     clientT.println("Connection: close");
     clientT.println();
-    
+    iconSincro = true;
   } else {
     Serial.println("Connection to a Server failed !!!");              // Si fallo la conexión
+    iconSincro = false;
   } 
   
                                                                 
@@ -126,6 +127,7 @@ bool testConnection(){
     Serial.println();
     Serial.println("disconnecting...");
     clientT.stop();
+    iconSincro = false;
   }
 
   if(rta == false){
