@@ -1,8 +1,10 @@
 /*
-    Librería tiny de U8g2 para manejar la pantalla SH1106 con I2C
-    Resolución 128X64
-    Monocromo 
-  
+ * Librería tiny de U8g2 para manejar la pantalla SH1106 con I2C
+ * OLED Resolución 128X64 - Monocromo
+ * 
+ *  Manejo del display emulando a una pantalla de celular
+ * 
+ * 
 */
 
 #include <U8g2lib.h>
@@ -12,14 +14,6 @@
 #include <Wire.h>
 #endif
 
-// Definición de las variables de ICONOS de Estados del HEADER
-String modoMKR1400    = "4g disconnected";       // Mensaje general
-bool iconAlerta       = false;                   // Alerte true or false
-String iconSMS        = "";                      // Mail OUT, IN o vacio para que no aparezca
-bool iconSincro       = false;                   // Sincronización con Internet true or false
-int iconSenal         = 0;                       // Señal de 4G true or false Varía entre 0 y 31 (mejor)
-float iconBateria     = 0;                       // Voltaje de la Batería auxiliar del MKR1400
-float lastIconBateria = 0;                       // Memoriza ultima lectura de bateria para no hacer un display si no cambio el valor
 
 
 
@@ -127,14 +121,14 @@ static const unsigned char bbp_Logo_bits[] U8X8_PROGMEM = {
 void displayBorraPantallaCompleta(){
   u8g2.clear();   
   u8g2.clearBuffer();   
-  u8g2.sendBuffer(); 
+  //u8g2.sendBuffer();              // Si lo pones flippea la pantalla, es mejor así porque si borro es para dibujar y ahí mando el Send 
 }
 
 void displayBorraBodyPantalla(){
   u8g2.setDrawColor(0);
   u8g2.drawBox(0,11,128,53);
   u8g2.setDrawColor(1);          
-  u8g2.sendBuffer(); 
+  //u8g2.sendBuffer();              // Si lo pones flippea la pantalla, es mejor así porque si borro es para dibujar y ahí mando el Send
 }
 
 void displayBorraHeaderPantalla(){
@@ -158,7 +152,14 @@ void displayWaitingStartUP(){
 }
 
 void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal, float bateria){  
-   
+
+  if(iconAlerta)
+     texto = texto.substring(0, 11); 
+  else if(iconSMS !="")
+     texto = texto.substring(0, 14);
+  else
+     texto = texto.substring(0, 15);
+     
   char buff[128];
   texto.toCharArray(buff,128);
   
@@ -174,18 +175,22 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
   // ICONO de Alertas
   if(alerta){
   u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
-  u8g2.drawStr(80,8,"A");                             // campanita
+  u8g2.drawStr(72,8,"A");                             // campanita
   }
 
 
   // ICONO de Mail
   if(sms=="OUT"){
   u8g2.setFont(u8g2_font_open_iconic_email_1x_t);
-  u8g2.drawStr(90,7,"@");                             // Mail saliente
+  u8g2.drawStr(90,8,"@");                             // Mail saliente
+  u8g2.setFont(u8g2_font_open_iconic_arrow_1x_t);
+  u8g2.drawStr(83,8,"C");
   }
   if(sms=="IN"){
   u8g2.setFont(u8g2_font_open_iconic_email_1x_t);
   u8g2.drawStr(90,8,"A");                             // Mail Recibido
+  u8g2.setFont(u8g2_font_open_iconic_arrow_1x_t);
+  u8g2.drawStr(83,8,"@");
   }
 
   // ICONO de Sincronización con Internet 
@@ -193,9 +198,9 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
     u8g2.setFont(u8g2_font_open_iconic_arrow_1x_t);
     u8g2.drawStr(100,8,"W");                            // Sincronizando Internet OK       
   } else {
-    u8g2.setFont(u8g2_font_open_iconic_arrow_1x_t);
-    u8g2.drawStr(100,8,"W");                            // NO Sincranizando
-    u8g2.drawLine(100, 0, 108, 8); 
+//    u8g2.setFont(u8g2_font_open_iconic_arrow_1x_t);
+//    u8g2.drawStr(100,8,"W");                            // NO Sincranizando
+//    u8g2.drawLine(100, 0, 108, 8); 
   }
 
   // ICONO de Señal del Celular
@@ -240,25 +245,25 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
     u8g2.drawLine(120, 0, 128, 8); 
   } 
 
-  if(bateria > 2.7 && bateria <= 3.4){
+  if(bateria > 2.7 && bateria <= 3.5){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 25%
     u8g2.drawBox(120,2,2,4);
   }
 
-  if(bateria > 3.4 && bateria <= 3.8){
+  if(bateria > 3.5 && bateria <= 3.8){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 50%
     u8g2.drawBox(120,2,3,4);
   }
 
-  if(bateria > 3.8 && bateria <= 4.10){
+  if(bateria > 3.8 && bateria <= 4.08){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 75%
     u8g2.drawBox(120,2,5,4);
   }
     
-  if (bateria > 4.10){
+  if (bateria > 4.08){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"I");                            // batería llena
   }
@@ -277,7 +282,8 @@ void startOled(){
    
    u8g2.begin();                                // Inicia el display  
    u8g2.enableUTF8Print();
-   u8g2.clear();                           
+   u8g2.clear();  
+   u8g2.setContrast(100);                        // Setea el contraste de la pantalla 0 a 255                                 
    u8g2.drawXBMP(36, 10, d4i_Logo_width, d4i_Logo_height, d4i_Logo_bits); 
    u8g2.setFont( u8g2_font_helvB08_tf);          
    u8g2.drawStr(14,62,"www.d4insghts.com");      
@@ -292,7 +298,8 @@ void drawImagebbp() {
 
    u8g2.begin();                                // Inicia el display  
    u8g2.enableUTF8Print();
-   u8g2.clear();                           
+   u8g2.clear();          
+   u8g2.setContrast(100);                        // Setea el contraste de la pantalla 0 a 255                 
    u8g2.drawXBMP(24, 7, bbp_Logo_width, bbp_Logo_height, bbp_Logo_bits); 
    u8g2.setFont( u8g2_font_helvB08_tf);          
    u8g2.drawStr(37,55,"BBP Group");      
@@ -324,12 +331,17 @@ void displayReloj(String dia, String hora){
   u8g2.sendBuffer();                           // transfer internal memory to the display
 }
 
-void displayBateryLevel(float iconBateria){
+
+
+void displaySafetyBateryLevel(float iconBateria){
   
-  if(iconBateria < 1.0)
+  if(iconBateria < 1.0){
     iconBateria = 0.0;
+    iconSMS = "OUT";
+    sendSMSTemporized(celuGuardia, "Alerta!!.. SafetyBatery esta en 0 volts");
+  }
   
-  if(lastIconBateria != iconBateria){
+  //if(lastIconBateria != iconBateria){
     char volts[10];
     String aux= String(iconBateria);
     aux.toCharArray(volts,10);
@@ -338,14 +350,156 @@ void displayBateryLevel(float iconBateria){
 
     u8g2.setFontMode(1);   
     u8g2.setFont(u8g2_font_6x10_tf);   
-    u8g2.drawStr(5,40,"Internal");
-    u8g2.drawStr(5,50,"Battery");
+    u8g2.drawStr(5,40,"SAFETY");
+    u8g2.drawStr(5,50,"BATTERY");
     u8g2.drawStr(120,50,"v");
-    u8g2.drawLine(60, 25, 60, 55); 
+    u8g2.drawLine(55, 25, 55, 55); 
     u8g2.setFont(u8g2_font_fub17_tn);   
     u8g2.drawStr(70,50,volts);
     u8g2.sendBuffer();         
-    lastIconBateria = iconBateria;
+  //  lastIconBateria = iconBateria;
+  //}
+}
+
+
+// Muestra en el display los resultados de la medición del INPUT del Inversor
+void displayInput(){
+
+  char volts[10];
+  String aux= String(iconBateria);
+  aux.toCharArray(volts,10);
+
+  
+  displayBorraBodyPantalla();
+
+  u8g2.setFontMode(1);   
+  u8g2.setFontDirection(3);
+  u8g2.setFont(u8g2_font_6x10_tf);   
+  u8g2.drawStr(14,54,"INPUT");
+  u8g2.setFontDirection(0);
+  u8g2.drawStr(90,29,"Volts");
+  u8g2.drawStr(90,46,"Ampers");
+  u8g2.drawStr(90,63,"Watts");
+  
+  u8g2.drawLine(20, 25, 20, 55); 
+  u8g2.setFont(u8g2_font_fub14_tn);   
+  u8g2.drawStr(32,29,"230");
+  u8g2.drawStr(32,46,"44");
+  u8g2.drawStr(32,63,"5000");
     
+  u8g2.sendBuffer();         
+}
+
+// Muestra en el display los resultados de la medición del OUTPUT del Inversor
+void displayOutput(){
+
+  char volts[10];
+  String aux= String(iconBateria);
+  aux.toCharArray(volts,10);
+
+  
+  displayBorraBodyPantalla();
+
+  u8g2.setFontMode(1);   
+  u8g2.setFontDirection(3);
+  u8g2.setFont(u8g2_font_6x10_tf);   
+  u8g2.drawStr(14,56,"OUTPUT");
+  u8g2.setFontDirection(0);
+  u8g2.drawStr(90,29,"Volts");
+  u8g2.drawStr(90,46,"Ampers");
+  u8g2.drawStr(90,63,"Watts");
+  
+  u8g2.drawLine(20, 25, 20, 55); 
+  u8g2.setFont(u8g2_font_fub14_tn);   
+  u8g2.drawStr(32,29,"220");
+  u8g2.drawStr(32,46,"4");
+  u8g2.drawStr(32,63,"1000");
+    
+  u8g2.sendBuffer();         
+}
+
+
+// Muestra en el display los resultados de la medición de BATERIAS del Inversor
+void displayBatteriesLevel(){
+
+  char volts[10];
+  String aux= String(iconBateria);
+  aux.toCharArray(volts,10);
+
+  
+  displayBorraBodyPantalla();
+
+  u8g2.setFontMode(1);   
+  u8g2.setFontDirection(3);
+  u8g2.setFont(u8g2_font_6x10_tf);   
+  u8g2.drawStr(14,64,"BATTERIES");
+  u8g2.setFontDirection(0);
+
+  u8g2.drawDisc(68,18,5,U8G2_DRAW_ALL);        // Circulitos para el nro de batería
+  u8g2.drawDisc(122,18,5,U8G2_DRAW_ALL);       // Circulitos para el nro de batería
+  u8g2.drawDisc(68,48,5,U8G2_DRAW_ALL);        // Circulitos para el nro de batería 
+  u8g2.drawDisc(122,48,5,U8G2_DRAW_ALL);       // Circulitos para el nro de batería
+  u8g2.setFontMode(0);
+  u8g2.setDrawColor(0);
+  u8g2.drawStr(66,22,"1");                     // Nro de batería dentro del circulito
+  u8g2.drawStr(120,22,"2");
+  u8g2.drawStr(66,52,"3");
+  u8g2.drawStr(120,52,"4");
+  u8g2.setFontMode(1);
+  u8g2.setDrawColor(1);
+  
+  //u8g2.setFont(u8g2_font_5x7_mf);
+  u8g2.drawStr(66,37,"v");
+  u8g2.drawStr(120,37,"v");
+  u8g2.drawStr(66,64,"v");
+  u8g2.drawStr(120,64,"v");
+
+  
+  u8g2.drawLine(20, 25, 20, 55);              // tabique de adelante
+  u8g2.drawLine(76, 25, 76, 55);              // tabique del medio
+  u8g2.drawLine(23, 40, 125, 40);             // línea de división a mitad de la pantalla
+  
+  u8g2.setFont(u8g2_font_fub11_tn);   
+  u8g2.drawStr(25,37,"14.4");                 // Reemplazar por valores reales de medición de voltaje
+  u8g2.drawStr(82,37,"12.3");
+  u8g2.drawStr(25,64,"9.12");
+  u8g2.drawStr(82,64,"9.12");
+    
+  u8g2.sendBuffer();         
+}
+
+
+
+// Muestra el cuerpo de los mensajes SMS entrantes 5 veces
+void displaySmsMsg(){
+
+  char nTelefono[20];
+  lastSMSSenderN.toCharArray(nTelefono,20);
+  
+  displayBorraBodyPantalla();
+  
+  u8g2.setFontMode(1);   
+  u8g2.setFont(u8g2_font_5x7_mf);           // Mejor uso esta porque tienen espaciado proporcional
+  u8g2.drawStr(0,20,"FROM:");
+  u8g2.drawStr(35,20,nTelefono);
+  u8g2.drawStr(0,30,"MSG:");
+
+  char line1[30];
+  lastSMSRecibed.substring(0,26).toCharArray(line1,30);
+  u8g2.drawStr(0,40,line1);
+
+  char line2[25];
+  lastSMSRecibed.substring(26,52).toCharArray(line2,30);
+  u8g2.drawStr(0,50,line2);
+
+  char line3[25];
+  lastSMSRecibed.substring(52,78).toCharArray(line3,30);
+  u8g2.drawStr(0,60,line3);
+  
+  u8g2.sendBuffer();         
+  delay(4000);
+
+  if(iconSMS == "IN" && SMSRetencion++ >= 5){
+      iconSMS = "";
   }
 }

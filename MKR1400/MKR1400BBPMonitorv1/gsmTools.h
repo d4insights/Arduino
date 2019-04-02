@@ -1,7 +1,7 @@
 /*
  *  Biblioteca de conexión 4G 
  * 
- * 
+ *  Conexión, desconexión, test de comunicación con el server de google
  * 
 */
 
@@ -11,6 +11,8 @@ const char PINNUMBER[]     = "1111";                  // Este es el PIN de la SI
 const char GPRS_APN[]      = "igprs.claro.com.ar";    // GPRS APN (provisto por CLARO ARGENTINA)
 const char GPRS_LOGIN[]    = "clarogprs";             // GPRS login (puede ir vacío en CLARO)
 const char GPRS_PASSWORD[] = "clarogprs";             // GPRS password (puede ir vacío en CLARO)
+
+
 
 bool gsmConnected = false;                            // connection GSM state
 
@@ -49,8 +51,6 @@ void modemConnect(){
     if ((gsmAccess.begin(PINNUMBER) == GSM_READY) && (gprs.attachGPRS(GPRS_APN, GPRS_LOGIN, GPRS_PASSWORD) == GPRS_READY)) {
       gsmConnected = true;
       Serial.println("APN Connected.. OK");
-      //iconSenal = true;
-      //modoMKR1400 = "APN Connected";
       
       //modoMKR1400 = modem.getIMEI();          // Recupera el nro de IMEI de la SIM
   
@@ -59,7 +59,6 @@ void modemConnect(){
       Serial.print("Current carrier: ");
       Serial.println(modoMKR1400);
       
-    
       // returns strength and ber
       // signal strength in 0-31 scale. 31 means power > 51dBm
       // BER is the Bit Error Rate. 0-7 scale. 99=not detectable
@@ -74,7 +73,7 @@ void modemConnect(){
       Serial.println("APN Connection error!!");
       iconSenal = 0;
       modoMKR1400 = "4g disconnected";
-      delay(1000);
+      //delay(1000);
     }
   }
 }

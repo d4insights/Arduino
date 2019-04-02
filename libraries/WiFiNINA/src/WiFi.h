@@ -21,7 +21,7 @@
 #ifndef WiFi_h
 #define WiFi_h
 
-#define WIFI_FIRMWARE_LATEST_VERSION "1.2.0"
+#define WIFI_FIRMWARE_LATEST_VERSION "1.2.1"
 
 #include <inttypes.h>
 
@@ -40,6 +40,7 @@ class WiFiClass
 private:
 
     static void init();
+    unsigned long _timeout;
 public:
     WiFiClass();
 
@@ -259,6 +260,8 @@ public:
     int ping(const char* hostname, uint8_t ttl = 128);
     int ping(const String &hostname, uint8_t ttl = 128);
     int ping(IPAddress host, uint8_t ttl = 128);
+
+    void setTimeout(unsigned long timeout);
 };
 
 extern WiFiClass WiFi;
