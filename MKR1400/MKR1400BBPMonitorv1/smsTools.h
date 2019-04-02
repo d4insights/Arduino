@@ -102,7 +102,7 @@ void reciveSMS(){
     }
   
     lastSMSRecibed = ((String) inComeMsg)+ '\n';
-    lastSMSRecibed.substring(0,auxs);
+    lastSMSRecibed.substring(0,auxs-1);
     
     Serial.println(lastSMSRecibed);
     Serial.println("END OF MESSAGE");
