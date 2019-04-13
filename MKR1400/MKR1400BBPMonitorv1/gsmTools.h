@@ -52,8 +52,8 @@ void modemConnect(){
       gsmConnected = true;
       Serial.println("APN Connected.. OK");
       
-      //modoMKR1400 = modem.getIMEI();          // Recupera el nro de IMEI de la SIM
-  
+      myIMEI = modem.getIMEI();          // Recupera el nro de IMEI de la SIM
+       
       // currently connected carrier
       modoMKR1400 = scannerNetworks.getCurrentCarrier();
       Serial.print("Current carrier: ");
@@ -73,7 +73,7 @@ void modemConnect(){
       Serial.println("APN Connection error!!");
       iconSenal = 0;
       modoMKR1400 = "4g disconnected";
-      //delay(1000);
+       
     }
   }
 }

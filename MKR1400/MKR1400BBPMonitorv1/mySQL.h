@@ -26,7 +26,7 @@ bool registraDBvLIPO(){
  if (millis() - ultimoRegistroDB >= intervalRegistroBD) {
     
     ultimoRegistroDB = millis();
-    //char path[] = "/";
+    
     int port = 80;                                            // port 80 is the default for HTTP
     bool rta = false;
     int tries = 0;
@@ -69,14 +69,23 @@ bool registraDBvLIPO(){
     
     tries = 0;
     Serial.print("Recibed for server.. ");
+    String respuesta = "";
     while(client.available()) {
       char c = client.read();                                          // Leo la respuesta del server
-      Serial.print(c);
+      //Serial.print(c);
       rta = true;
+      respuesta = respuesta + c;
       if(tries++>15)
-       break;
-    }   
+          break;
+    }
    
+    Serial.println(respuesta);
+    if(respuesta.indexOf("HTTP/1.1 200 OK")<0){                       // Si no devuelva esta cadena no pudo llegar a la Base de Datos para grabar
+          displayError("Access fail, DB Server");  
+          iconSincro = false; 
+          delay(1500);
+    }
+
     if (!client.available() && !client.connected()) {                 // Si el server me desconectó, paro el cliente WEB  
       Serial.println();
       Serial.println("disconnecting...");

@@ -146,10 +146,25 @@ void displayWaitingStartUP(){
   u8g2.drawStr(114,62,"d4");
   u8g2.setFont(u8g2_font_5x7_tf);
   u8g2.drawStr(124,63,"i"); 
-  u8g2.sendBuffer();   
-  
-  
+  u8g2.sendBuffer();    
 }
+
+void displayError(String texto){
+  
+  displayBorraBodyPantalla();
+  
+  char buff[128];
+  texto.toCharArray(buff,128);
+  
+  u8g2.setFont( u8g2_font_helvB08_tf);          
+  u8g2.drawStr(9,40,buff);      
+  u8g2.setFont(u8g2_font_timR08_tr);            
+  u8g2.drawStr(114,62,"d4");
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(124,63,"i"); 
+  u8g2.sendBuffer();    
+}
+
 
 void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal, float bateria){  
 
@@ -335,30 +350,22 @@ void displayReloj(String dia, String hora){
 
 void displaySafetyBateryLevel(float iconBateria){
   
-  if(iconBateria < 1.0){
-    iconBateria = 0.0;
-    iconSMS = "OUT";
-    sendSMSTemporized(celuGuardia, "Alerta!!.. SafetyBatery esta en 0 volts");
-  }
+  char volts[10];
+  String aux= String(iconBateria);
+  aux.toCharArray(volts,10);
   
-  //if(lastIconBateria != iconBateria){
-    char volts[10];
-    String aux= String(iconBateria);
-    aux.toCharArray(volts,10);
-    
-    displayBorraBodyPantalla();
+  displayBorraBodyPantalla();
 
-    u8g2.setFontMode(1);   
-    u8g2.setFont(u8g2_font_6x10_tf);   
-    u8g2.drawStr(5,40,"SAFETY");
-    u8g2.drawStr(5,50,"BATTERY");
-    u8g2.drawStr(120,50,"v");
-    u8g2.drawLine(55, 25, 55, 55); 
-    u8g2.setFont(u8g2_font_fub17_tn);   
-    u8g2.drawStr(70,50,volts);
-    u8g2.sendBuffer();         
-  //  lastIconBateria = iconBateria;
-  //}
+  u8g2.setFontMode(1);   
+  u8g2.setFont(u8g2_font_6x10_tf);   
+  u8g2.drawStr(5,40,"SAFETY");
+  u8g2.drawStr(5,50,"BATTERY");
+  u8g2.drawStr(120,50,"v");
+  u8g2.drawLine(55, 25, 55, 55); 
+  u8g2.setFont(u8g2_font_fub17_tn);   
+  u8g2.drawStr(70,50,volts);
+  u8g2.sendBuffer();         
+
 }
 
 
@@ -422,9 +429,21 @@ void displayOutput(){
 // Muestra en el display los resultados de la medición de BATERIAS del Inversor
 void displayBatteriesLevel(){
 
-  char volts[10];
-  String aux= String(iconBateria);
-  aux.toCharArray(volts,10);
+  char bat01[10];                              // Bateria 01 de soporte del INVERSOR
+  String aux01= String(bateria01,2);
+  aux01.toCharArray(bat01,10);
+
+  char bat02[10];                              // Bateria 02 de soporte del INVERSOR
+  String aux02= String(bateria02,2);
+  aux02.toCharArray(bat02,10);
+
+  char bat03[10];                              // Bateria 03 de soporte del INVERSOR
+  String aux03= String(bateria03,2);
+  aux03.toCharArray(bat03,10);
+
+  char bat04[10];                              // Bateria 04 de soporte del INVERSOR 
+  String aux04= String(bateria04,2);
+  aux04.toCharArray(bat04,10);
 
   
   displayBorraBodyPantalla();
@@ -460,10 +479,10 @@ void displayBatteriesLevel(){
   u8g2.drawLine(23, 40, 125, 40);             // línea de división a mitad de la pantalla
   
   u8g2.setFont(u8g2_font_fub11_tn);   
-  u8g2.drawStr(25,37,"14.4");                 // Reemplazar por valores reales de medición de voltaje
-  u8g2.drawStr(82,37,"12.3");
-  u8g2.drawStr(25,64,"9.12");
-  u8g2.drawStr(82,64,"9.12");
+  u8g2.drawStr(25,37,bat01);                  // Reemplazar por valores reales de medición de voltaje
+  u8g2.drawStr(82,37,bat02);
+  u8g2.drawStr(25,64,bat03);
+  u8g2.drawStr(82,64,bat04);
     
   u8g2.sendBuffer();         
 }
