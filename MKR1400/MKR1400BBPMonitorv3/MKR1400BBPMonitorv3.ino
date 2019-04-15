@@ -15,7 +15,7 @@ String iconSMS        = "";                      // Mail OUT, IN o vacio para qu
 bool iconSincro       = false;                   // Sincronización con Internet true or false
 int iconSenal         = 0;                       // Señal de 4G true or false Varía entre 0 y 31 (mejor)
 float iconBateria     = 0;                       // Voltaje de la Batería auxiliar del MKR1400
-int SMSRetencion = 0;
+int SMSRetencion      = 0;
 
 // Variables Auxiliare de Monitoreo de los Inversores
 float   VIN = 0;                // Voltaje de entrada       (Volts)
@@ -84,11 +84,37 @@ void loop() {
 
         // Handler Voltaje, Amperaje, Potencia de ENTRADA       
         displayInput();
+        if(VIN < 190){
+          iconSMS = "OUT";
+          String msg = "Alerta!!.. BAJA TENSION DE ENTRADA ";
+          msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
+          sendSMSTemporizedRed(celuGuardia, msg);
+        } 
+        if(VIN > 240){
+          iconSMS = "OUT";
+          String msg = "Alerta!!.. ALTA TENSION DE ENTRADA ";
+          msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
+          sendSMSTemporizedRed(celuGuardia, msg);
+        }
+        if(VIN >= 190 && VIN <= 240 && iconSMS == "OUT")
+          iconSMS = "";
         delay(1500);
+
+
         
         // Handler Voltaje, Amperaje, Potencia de SALIDA
         displayOutput();
+        if(IOUT > 4){
+          iconSMS = "OUT";
+          String msg = "Alerta!!.. CONSUMO DE SALIDA EXCESIVO ";
+          msg = msg + '\n' + "IOUT:" + (String) IOUT + "a" + '\n' + "d4i:" + myIMEI;
+          sendSMSTemporizedRed(celuGuardia, msg);
+        }
+        if(IOUT <= 4 && iconSMS == "OUT")
+          iconSMS = "";
         delay(1500);
+
+
 
         // Handler Bateria de soporte del inversor
         bateria01 = readADCVolaje(1);
@@ -98,24 +124,24 @@ void loop() {
         if(bateria01 < 3.5 || bateria02 < 3.5 || bateria03 < 3.5 || bateria03 < 3.5){
           iconSMS = "OUT";
           iconAlerta = false;
-          String msg = "Alerta!!.. Baterias de Soporte de Inversor ";
+          String msg = "Alerta!!.. BATERIAS DE SOPORTE INVERSOR ";
           msg = msg + '\n' + "Bat01:"+ (String) bateria01 + "v, Bat02:" + (String) bateria02 + "v, Bat03:" + (String) bateria03 + "v, Bat04:" + (String) bateria04 + "v" + '\n' + "d4i:" + myIMEI;
           sendSMSTemporizedIBat(celuGuardia, msg);
         }        
         displayBatteriesLevel();
-        delay(500);
+        //delay(500);
 
       
         // Handler SafetyLIPO
         iconBateria = readADCVolaje(0);
-        if(iconBateria < 1.0){
+        if(iconBateria < 2.7){
           //iconBateria = 0.0;
           iconSMS = "OUT";
-          String msg = "Alerta!!.. SafetyBatery: ";
-          msg = msg + '\n' + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
+          String msg = "Alerta!!.. BATERIA DE CONTINGENCIA ";
+          msg = msg + '\n' + "Bat00:" + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
           sendSMSTemporizedSBat(celuGuardia, msg);
         }
-        if(iconBateria >= 1.0 && iconSMS == "OUT")
+        if(iconBateria >= 2.7 && iconSMS == "OUT")
           iconSMS = "";
         if(iconBateria < 3.8){
           displaySafetyBateryLevel(iconBateria);

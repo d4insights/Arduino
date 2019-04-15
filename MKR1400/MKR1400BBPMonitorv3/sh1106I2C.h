@@ -398,7 +398,10 @@ void displayInput(){
   
   u8g2.drawLine(20, 25, 20, 55); 
   u8g2.setFont(u8g2_font_fub14_tn);   
-  u8g2.drawStr(32,29,volts);
+  if(VIN>0)
+    u8g2.drawStr(32,29,volts);
+  else
+    u8g2.drawStr(32,29,"0");
   if(IIN>0)
     u8g2.drawStr(32,46,ampers);
   else
@@ -436,7 +439,10 @@ void displayOutput(){
   
   u8g2.drawLine(20, 25, 20, 55); 
   u8g2.setFont(u8g2_font_fub14_tn);   
-  u8g2.drawStr(32,29,volts);
+  if(VOUT>0)
+    u8g2.drawStr(32,29,volts);
+  else
+    u8g2.drawStr(32,29,"0");
   if(IOUT>0)
     u8g2.drawStr(32,46,ampers);
   else

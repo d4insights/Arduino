@@ -12,10 +12,11 @@
 unsigned long ultimoSMSSafetyBatery  = 600000;                 // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
 long intervalSMSSafetyBatery         = 600000;                 // Manejo del período de tiempo entre SMS (así manda cada 10 min)
 
-
 unsigned long ultimoSMSInversorBatery  = 600000;               // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
 long intervalSMSInversorBatery         = 600000;               // Manejo del período de tiempo entre SMS (así manda cada 10 min)
 
+unsigned long ultimoSMSRed            = 600000;               // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
+long intervalSMSRed                   = 600000;               // Manejo del período de tiempo entre SMS (así manda cada 10 min)
 
 
 #include <MKRGSM.h>
@@ -30,16 +31,16 @@ GSM_SMS smsOutcome;                                   // Objeto SMS de salida
 GSM_SMS smsIncome;                                    // Objeto SMS de entrada
 
 
-
-void sendSMSTemporizedSBat(char* cel,String msg){
+// Mensajes temporizados de Alertas en la Red Electrica
+void sendSMSTemporizedRed(char* cel,String msg){
   
- if (millis() - ultimoSMSSafetyBatery >= intervalSMSSafetyBatery) {
+ if (millis() - ultimoSMSRed >= intervalSMSRed) {
     
-    ultimoSMSSafetyBatery = millis();
+    ultimoSMSRed = millis();
      
     char txtMsg[200];
     msg.toCharArray(txtMsg,200);
-    Serial.print("SMS message --> to: ");
+    Serial.print("SMS message RED --> to: ");
     Serial.print(cel);
     Serial.print(" | msg: ");
     Serial.println(txtMsg);
@@ -51,6 +52,29 @@ void sendSMSTemporizedSBat(char* cel,String msg){
   }
 }
 
+
+// Mensajes temporizados de Alertas en la Safety Battery
+void sendSMSTemporizedSBat(char* cel,String msg){
+  
+ if (millis() - ultimoSMSSafetyBatery >= intervalSMSSafetyBatery) {
+    
+    ultimoSMSSafetyBatery = millis();
+     
+    char txtMsg[200];
+    msg.toCharArray(txtMsg,200);
+    Serial.print("SMS message SAFETY BATTERY--> to: ");
+    Serial.print(cel);
+    Serial.print(" | msg: ");
+    Serial.println(txtMsg);
+      
+    smsOutcome.beginSMS(cel);                    // send the message
+    smsOutcome.print(txtMsg);
+    smsOutcome.endSMS();
+    Serial.println("SMS Sent !!!");
+  }
+}
+
+// Mensajes temporizados de Alertas en las baterías del Inversor
 void sendSMSTemporizedIBat(char* cel,String msg){
   
  if (millis() - ultimoSMSInversorBatery >= intervalSMSInversorBatery) {
@@ -59,7 +83,7 @@ void sendSMSTemporizedIBat(char* cel,String msg){
      
     char txtMsg[200];
     msg.toCharArray(txtMsg,200);
-    Serial.print("SMS message --> to: ");
+    Serial.print("SMS message INVERSOR BATTERIES --> to: ");
     Serial.print(cel);
     Serial.print(" | msg: ");
     Serial.println(txtMsg);
@@ -148,8 +172,8 @@ void handleCommandSMS(String Command){
   Command.toLowerCase();
 
 
-  if (Command.indexOf("red")>=0 && commandExecuted == false){
-    Serial.println("COMMAND.. estado de la red");
+  if ((Command.indexOf("entrada")>=0 && commandExecuted == false) || (Command.indexOf("red")>=0 && commandExecuted == false) ){
+    Serial.println("COMMAND.. estado de la entrada red");
     commandExecuted = true;
     String rta = "Estado de la red electrica de entrada ";
     rta = rta + '\n' + "VIN:"+ (String) VIN + "v, IIN:" + (String) IIN + "a, PIN:" + (String) PIN + "w" + '\n' + "d4i:" + myIMEI;
