@@ -56,15 +56,18 @@ long intervalCicloHeader        = 5000;       // Manejo del período de tiempo e
 
 void setup() {
   delay(100);
-  
+  Serial.begin(115200);
  
   analogReadResolution(12);                   // Aumenta la precisión de la pata abalogina de 0-1023 a 0-4096  
   
-  if(debugMode){                     
-    String tel = String("1167577019");
-    tel.toCharArray(celuGuardia,20);
-    memFlash.valid = true;
-    Serial.begin(115200);
+  if(debugMode){          
+    if(memFlash.valid == false){           
+      String tel = String("1167577019");
+      tel.toCharArray(celuGuardia,20);
+      memFlash.valid = true;  
+    }
+    else 
+      leeFlashStorage(); 
   } else {
     leeFlashStorage();  
   }  

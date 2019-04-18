@@ -45,11 +45,11 @@ void decodificacionTramaAC(){
 
 void sendRequestACModule(){
   int pos = 0;
-  Wire.requestFrom(8, 21);        // Manda la petición al dispositivo 8 y espera recibir 21 bytes
+  Wire.requestFrom(8, 21);              // Manda la petición al dispositivo 8 y espera recibir 21 bytes
   Serial.print("Trama Recibida:<");
-  while(Wire.available())         // slave may send less than requested
+  while(Wire.available())               // slave may send less than requested
   { 
-    char c = Wire.read();         // receive a byte as character
+    char c = Wire.read();               // receive a byte as character
     datosSensores[pos] = c - 48;
     pos++;
     Serial.print(c);           

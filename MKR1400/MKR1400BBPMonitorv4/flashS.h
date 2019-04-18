@@ -16,8 +16,8 @@ typedef struct {
 } FMemory;
 
 
-FlashStorage(my_flash_store, FMemory);            // Reservo un espacio de memoria flash
-FMemory memFlash;                                 // Creo el objeto credenciales del tipo de la estructura FMemory
+FlashStorage(my_flash_store, FMemory);              // Reservo un espacio de memoria flash
+FMemory memFlash;                                   // Creo el objeto credenciales del tipo de la estructura FMemory
 
 String myPassword = "";
 
@@ -40,7 +40,7 @@ void escribeFlashStorage(){
   memFlash.valid = true;
   myPassword.toCharArray(memFlash.password,20);
 
-  my_flash_store.write(memFlash);             // Guardo en la Flash los datos de la estructura
+  my_flash_store.write(memFlash);                   // Guardo en la Flash los datos de la estructura
   Serial.print("Guardé en FlashStorage --> ");
   Serial.println(memFlash.telGuardia);
 }

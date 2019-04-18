@@ -31,14 +31,61 @@ bool registraDBvLIPO(){
     bool rta = false;
     int tries = 0;
 
-    char CadenaInstrucc[100];           // OJO QUE SI NO TE ALCANZA LA DIMENSION PARA GUARDAR EL STRING EL PROGRAMA EXPLOTA POR EL WATCHDOG DE LA ESP
+    char CadenaInstrucc[500];           // OJO QUE SI NO TE ALCANZA LA DIMENSION PARA GUARDAR EL STRING EL PROGRAMA EXPLOTA POR EL WATCHDOG DE LA ESP
     
-    String Instruccion = "/edenor/insertLiPo.php";
+    String Instruccion = "/edenor/insert.php";
     Instruccion.concat("?IDInversor=");
-    Instruccion.concat(033);
-    Instruccion.concat("&VLIPO=");
+    Instruccion.concat(myIMEI.substring(myIMEI.length()-10,myIMEI.length()));
+    
+    Instruccion.concat("&VIN=");
+    Instruccion.concat(VIN);    
+    Instruccion.concat("&IIN=");
+    Instruccion.concat(IIN);  
+    Instruccion.concat("&PIN=");
+    Instruccion.concat(PIN);  
+    
+    Instruccion.concat("&VOUT=");
+    Instruccion.concat(VOUT);      
+    Instruccion.concat("&IOUT=");
+    Instruccion.concat(IOUT);  
+    Instruccion.concat("&POUT=");
+    Instruccion.concat(POUT);
+              
+    Instruccion.concat("&VB00=");
     Instruccion.concat(String(iconBateria,2)); 
-            
+    Instruccion.concat("&VB01=");
+    Instruccion.concat(bateria01); 
+    Instruccion.concat("&VB02=");
+    Instruccion.concat(bateria02); 
+    Instruccion.concat("&VB03=");
+    Instruccion.concat(bateria03); 
+    Instruccion.concat("&VB04=");
+    Instruccion.concat(bateria04); 
+    Instruccion.concat("&VB05=");
+    Instruccion.concat(0); 
+    Instruccion.concat("&VB06=");
+    Instruccion.concat(0); 
+    Instruccion.concat("&VB07=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB08=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB09=");
+    Instruccion.concat(0); 
+    Instruccion.concat("&VB10=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB11=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB12=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB13=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB14=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB15=");
+    Instruccion.concat(0);
+    Instruccion.concat("&VB16=");
+    Instruccion.concat(0);
+                
     Instruccion.concat(" ");
     
     Instruccion.toCharArray(CadenaInstrucc,Instruccion.length());
