@@ -13,11 +13,10 @@ const char GPRS_LOGIN[]    = "clarogprs";             // GPRS login (puede ir va
 const char GPRS_PASSWORD[] = "clarogprs";             // GPRS password (puede ir vacío en CLARO)
 
 
-
 bool gsmConnected = false;                            // connection GSM state
 
 GSMClient client;                                     // Objeto Cliente GSM
-
+GSMLocation location;                                 // Objeto GPS
 GPRS gprs;                                            // Objeto Conexión (APN)
 GSM gsmAccess;                                        // Objeto Autenticación de GSM
 GSMScanner scannerNetworks;                           // Objeto de manejo de las redes para saber a cual me conecto
@@ -33,6 +32,30 @@ void modemDisconect(){
   Serial.println("Shutdown the modem ..");
   iconSenal = 0;
   gsmAccess.shutdown();
+}
+
+
+// La coordenada satelital del dispositivo medida desde la red GSM
+//
+void myUbicacionGPS(){
+  if (location.available()) {
+//    Serial.print("Location: ");
+//    Serial.print(location.latitude(), 7);
+//    Serial.print(", ");
+//    Serial.print(location.longitude(), 7);
+//
+//    Serial.print(" | Altitude: ");
+//    Serial.print(location.altitude());
+//    Serial.print("m");
+//
+//    Serial.print(" | Accuracy: +/- ");
+//    Serial.print(location.accuracy());
+//    Serial.println("m");
+
+    myLocation = String(location.latitude(), 7) + ", " + String(location.longitude(), 7);
+    Serial.print("GPS Location: ");
+    Serial.println(myLocation);
+  }
 }
 
 

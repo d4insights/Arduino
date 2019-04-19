@@ -139,20 +139,28 @@ void displayBorraHeaderPantalla(){
 }
 
 
-void displayError(String texto){
+void displayError(String textoA, String textoB){
   
   displayBorraBodyPantalla();
-  
-  char buff[128];
-  texto.toCharArray(buff,128);
+
+  char buffA[128];
+  textoA.toCharArray(buffA,128);
+
+  char buffB[128];
+  textoB.toCharArray(buffB,128);
+
+  u8g2.setFont( u8g2_font_open_iconic_check_4x_t);
+  u8g2.drawStr(9,53,"D");
   
   u8g2.setFont( u8g2_font_helvB08_tf);          
-  u8g2.drawStr(9,40,buff);      
+  u8g2.drawStr(50,30,buffA);
+  u8g2.drawStr(50,50,buffB);
+     
   u8g2.setFont(u8g2_font_timR08_tr);            
   u8g2.drawStr(114,62,"d4");
   u8g2.setFont(u8g2_font_5x7_tf);
   u8g2.drawStr(124,63,"i"); 
-  u8g2.sendBuffer();    
+  u8g2.sendBuffer();      
 }
 
 void displayWaitingStartUP(){

@@ -5,7 +5,10 @@
  * 
  * 
  * 
- * 
+ *   Ojo con los mensajes que te manda la compañía de celular !!!
+ *   SMS Message received from: 773
+ *   [Claro]Credito insuficiente para enviar el SMS.Responde 35 y te prestamos $35. Ahora podes pedir tu Presta y comprar un Pack a solo un clic en claro.co
+ *   END OF MESSAGE
  * 
 */
 
@@ -142,11 +145,11 @@ void reciveSMS(){
       lastSMSSenderN = (String) senderNumber;
       Serial.println(lastSMSSenderN);
   
-      // An example of message disposal
-      if (smsIncome.peek() == '#') {                              // Any messages starting with # should be discarded
-        Serial.println("SMS Discarded >> #");
-        smsIncome.flush();
-      }
+//      // An example of message disposal
+//      if (smsIncome.peek() == '#') {                              // Any messages starting with # should be discarded
+//        Serial.println("SMS Discarded >> #");
+//        smsIncome.flush();
+//      }
   
       // Read message bytes and print them
       while ((cs = smsIncome.read()) != -1) {
@@ -210,7 +213,7 @@ void handleCommandSMS(String Command){
     conteste = true;
   }
   
-  if (Command.indexOf("safety")>=0 && commandExecuted == false){
+  if ((Command.indexOf("conting")>=0 && commandExecuted == false) || (Command.indexOf("safety")>=0 && commandExecuted == false)){
     Serial.println("COMMAND.. estado de la Safety Battery");
     commandExecuted = true;
     String rta = "La bateria de respaldo tiene una carga de ";
@@ -222,7 +225,7 @@ void handleCommandSMS(String Command){
   }  
 
 
-  if (Command.indexOf("reboot")>=0 && commandExecuted == false){
+  if ((Command.indexOf("reinicio")>=0 && commandExecuted == false) || (Command.indexOf("reboot")>=0 && commandExecuted == false)){
     Serial.println("COMMAND.. reboot de MKR1400");
     commandExecuted = true;
     int countdownMS = Watchdog.enable(1000);
@@ -231,8 +234,22 @@ void handleCommandSMS(String Command){
     Serial.println(" milliseconds!");
     conteste = true;
   } 
+
+  if (Command.indexOf("alertassms=apagar")>=0 && commandExecuted == false){
+    Serial.println("COMMAND.. Apagar las alertas de SMS");
+    commandExecuted = true;
+    alertaSMS = false;
+    conteste = true;
+  } 
+
+  if (Command.indexOf("alertassms=prender")>=0 && commandExecuted == false){
+    Serial.println("COMMAND.. Prender las alertas de SMS");
+    commandExecuted = true;
+    alertaSMS = true;
+    conteste = true;
+  }
   
-  if ((Command.indexOf("help")>=0 && commandExecuted == false) || (Command.indexOf("ayuda")>=0 && commandExecuted == false)){
+  if ((Command.indexOf("ayuda")>=0 && commandExecuted == false) || (Command.indexOf("help")>=0 && commandExecuted == false)){
     Serial.println("COMMAND.. help");
     commandExecuted = true;
     String rta = "Lista de Keywords";
@@ -242,6 +259,18 @@ void handleCommandSMS(String Command){
     sendSMSDirect(nCelu, rta);
     conteste = true;
   }
+
+  if ((Command.indexOf("coord")>=0 && commandExecuted == false) || (Command.indexOf("ubic")>=0 && commandExecuted == false)){
+    Serial.println("COMMAND.. Coordenadas del GPS");
+    commandExecuted = true;
+    String rta = "Mi ubicacion actual es:";
+    rta = rta + '\n' + myLocation + '\n' + "d4i:" + myIMEI;
+    char nCelu[20];
+    lastSMSSenderN.toCharArray(nCelu,20);
+    sendSMSDirect(nCelu, rta);
+    conteste = true;
+  }
+
 
   int x = Command.indexOf("guardia=");
   Command = Command.substring(x+8, Command.length());
@@ -265,11 +294,11 @@ void handleCommandSMS(String Command){
 
 
 
-  if (conteste == false && commandExecuted == false){
+  if (conteste == false && commandExecuted == false && (lastSMSSenderN.length()>6) && (lastSMSSenderN.indexOf("Filo.")<0) ){
     Serial.println("COMMAND.. No supe contestar nada !!!");
     commandExecuted = true;
-    String rta = "Hola, soy BBPBot!!";
-    rta = rta + '\n' + "puedes enviarme un SMS con la palabra <Ayuda> y con gusto te voy a guiar" + '\n' + "d4i:" + myIMEI;
+    String rta = "Puedes enviarme un SMS con la palabra <AYUDA> y con gusto te voy a guiar.";
+    rta = rta + '\n' + "d4i:" + myIMEI;
     char nCelu[20];
     lastSMSSenderN.toCharArray(nCelu,20);
     sendSMSDirect(nCelu, rta);

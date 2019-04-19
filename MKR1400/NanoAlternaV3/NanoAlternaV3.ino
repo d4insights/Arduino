@@ -18,17 +18,16 @@ void setup() {
   pinMode(LEDpin, OUTPUT);
   digitalWrite(LEDpin, HIGH); delay(100); digitalWrite(LEDpin, LOW); //Parpadeo Rapido
   
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Medidor de Alterna Version 3");
-  Serial.println("/////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
   
   //Inicio los sensores de alterna
-  ctIN.voltage(A0,  218.2, 1.7); // Calibration, phase_shift
-  ctOUT.voltage(A2, 215.194, 1.7); // Calibration, phase_shift
-  ctIN.current(A1, 1.92377); // CT channel 1, calibration. calibration (2000 turns / 22 Ohm burden resistor = 90.909)
-  ctOUT.current(A3, 1.92377); // CT channel 2, calibration.
+  ctIN.voltage(A0,  218.2, 1.7);        // Calibration, phase_shift
+  ctOUT.voltage(A2, 215.194, 1.7);      // Calibration, phase_shift
+  ctIN.current(A1, 1.92377);            // CT channel 1, calibration. calibration (2000 turns / 22 Ohm burden resistor = 90.909)
+  ctOUT.current(A3, 1.92377);           // CT channel 2, calibration.
   
-  //Inicio la comunicacion con el modulo de comunicaciones
+  //Inicio la comunicacion I2C
   Wire.begin(8);                        // Inicio en modo slave (dispositivo Nro 8)  
   Wire.onRequest(requestEvent);  
   
@@ -44,11 +43,11 @@ void loop() {
     
     //Mediciones
     
-    ctIN.calcVI(100,2000); // Calculate all. No.of half wavelengths (crossings), time-out
+    ctIN.calcVI(100,2000);                // Calculate all. No.of half wavelengths (crossings), time-out
     VIN = ctIN.Vrms ;         delay(50);
     IIN = ctIN.calcIrms(1484);delay(50);
     
-    ctOUT.calcVI(100,2000); // Calculate all. No.of half wavelengths (crossings), time-out
+    ctOUT.calcVI(100,2000);               // Calculate all. No.of half wavelengths (crossings), time-out
     VOUT = ctOUT.Vrms ;           delay(50);
     //IOUT = ctOUT.calcIrms(1484);delay(50);
 
@@ -58,9 +57,9 @@ void loop() {
       VIN = 0;
     if(VOUT > 300 || VOUT < 10)
       VOUT= 0;
-    if(IOUT > 10 || IOUT < 0.25)
+    if(IOUT > 10 || IOUT < 0.1)
       IOUT = 0;
-    if(IIN > 10 || IIN < 0.25)
+    if(IIN > 10 || IIN < 0.1)
       IIN = 0;
 
     //Habilito envio de datos
