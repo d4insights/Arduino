@@ -8,7 +8,7 @@
 */
 
 // Definición de las variables de ICONOS de Estados del HEADER
-String modoMKR1400    = "4g desconectado";       // Mensaje general
+String modoMKR1400    = "4g no iniciado";      // Mensaje general
 String myIMEI         = "";                      // IMEI de la SIM que tengo puesta
 bool iconAlerta       = false;                   // Alerte true or false
 String iconSMS        = "";                      // Mail OUT, IN o vacio para que no aparezca
@@ -50,19 +50,21 @@ bool alertaSMS = true;                        // Activas o silenciar las alertas
 bool debugMode = true;                        // Poner en false cuando está en producción 
 
 
-unsigned long ultimoCicloBody   = 5000;      // Auxiliar para manejo del período de tiempo entre ciclos de display cuerpo de pantalla
-long intervalCicloBody          = 5000;      // Manejo del período de tiempo entre ciclos de display cuerpo de pantalla
-unsigned long ultimoCicloHeader = 5000;       // Auxiliar para manejo del período de tiempo entre ciclos de display header
-long intervalCicloHeader        = 5000;       // Manejo del período de tiempo entre ciclos de display header
+unsigned long ultimoCicloBody   = 6000;      // Auxiliar para manejo del período de tiempo entre ciclos de display cuerpo de pantalla
+long intervalCicloBody          = 6000;      // Manejo del período de tiempo entre ciclos de display cuerpo de pantalla
+unsigned long ultimoCicloHeader = 3000;       // Auxiliar para manejo del período de tiempo entre ciclos de display header
+long intervalCicloHeader        = 3000;       // Manejo del período de tiempo entre ciclos de display header
 
 
 
 void setup() {
 
   delay(100);
-  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);        // Uso el led builtin para señalar estado de actividad 
+  
+
+  //Serial.begin(115200);
  
-  analogReadResolution(12);                   // Aumenta la precisión de la pata abalogina de 0-1023 a 0-4096  
   
   if(debugMode){          
     if(memFlash.valid == false){           
@@ -80,16 +82,18 @@ void setup() {
   
   //startOled();              // Logo d4i
   drawImagebbp();             // Logo BBPGroup Splash window
+  Watchdog.sleep(1500);
   
   displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
   displayMessage("Iniciando los", "servicios ...");
 
   Serial.println("Starting Arduino GSM Connection..");
   modemConnect();
-
-  iconBateria = readADCVolaje(0);
+  
+ 
+  // iconBateria = readADCVolaje(0);
   displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
-  //delay(1000);  
+    
 
 }
 
@@ -97,8 +101,23 @@ void setup() {
 void loop() {
    if (millis() - ultimoCicloBody >= intervalCicloBody) {
         ultimoCicloBody = millis();      
-   
+
+
+        // Rutina de reconexión por si se pierde el 4G
+        //
+        if(!gsmConnected){
+            displayError("4g Desconectado", "Reconectando..");
+            Watchdog.sleep(1000);
+            modemConnect();
+        }
+
+
+        
+        // Handler de lectura de AC
+        //
         sendRequestACModule();
+
+
 
         // Handler ENTRADA Voltaje, Amperaje, Potencia 
         //
@@ -108,18 +127,18 @@ void loop() {
           String msg = "Alerta!!.. BAJA TENSION DE ENTRADA ";
           msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
          // sendSMSTemporizedRed(celuGuardia, msg);
-          registraAlertaDB("A","AC", String(VIN,0), "BAJA_Tension_de_entrada");
+          registraAlertaDB("A","AC", String(VIN,2), "BAJA_Tension_de_entrada");
         } 
         if(VIN > 240 && alertaSMS){
           iconSMS = "OUT";
           String msg = "Alerta!!.. ALTA TENSION DE ENTRADA ";
           msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
           //sendSMSTemporizedRed(celuGuardia, msg);
-          registraAlertaDB("A","AC", String(VIN,0), "ALTA_Tension_de_entrada");
+          registraAlertaDB("A","AC", String(VIN,2), "ALTA_Tension_de_entrada");
         }
         if(VIN >= 190 && VIN <= 240 && iconSMS == "OUT")
           iconSMS = "";
-        delay(1500);
+        Watchdog.sleep(1500);
 
 
         
@@ -135,17 +154,25 @@ void loop() {
         }
         if(IOUT <= 4 && iconSMS == "OUT")
           iconSMS = "";
-        delay(1500);
+        Watchdog.sleep(1500);
+
+
 
         // Handler de lectura del GPS
         //
         myUbicacionGPS();
 
+
+
         // Handler Baterias de soporte del inversor
         //
+        Watchdog.sleep(50);
         bateria01 = readADCVolaje(1);
+        Watchdog.sleep(50);
         bateria02 = readADCVolaje(2);
+        Watchdog.sleep(50);
         bateria03 = readADCVolaje(3);
+        Watchdog.sleep(50);
         bateria04 = readADCVolaje(4);
         if((bateria01 < 11.0 || bateria02 < 11.0 || bateria03 < 11.0 || bateria03 < 11.0)  && alertaSMS){
           iconSMS = "OUT";
@@ -170,33 +197,47 @@ void loop() {
       
         // Handler Bateria de Contingencia
         //
-        iconBateria = readADCVolaje(0);
+        //iconBateria = readADCVolaje(0);
         //iconBateria = bateria01;
-        if(iconBateria < 2.7 && alertaSMS){
+        iconBateria = (bateria01 + bateria02 + bateria03 + bateria04) / 4;
+
+        //if(iconBateria < 2.7 && alertaSMS){
+        if(iconBateria < 10.5 && alertaSMS){
           iconSMS = "OUT";
           String msg = "Alerta!!.. BATERIA DE CONTINGENCIA ";
           msg = msg + '\n' + "BatCont:" + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
           //sendSMSTemporizedSBat(celuGuardia, msg);
           registraAlertaDB("B","DC",String(iconBateria,2), "BAJA_CARGA_Bateria_de_Contingencia");
         }
-        if(iconBateria >= 2.7 && iconSMS == "OUT")
+        
+        //if(iconBateria >= 2.7 && iconSMS == "OUT")
+        if(iconBateria >= 10.5 && iconSMS == "OUT")
           iconSMS = "";
+        
         //if(iconBateria < 3.8){
-          delay(800);
+        if(iconBateria < 12){
+          Watchdog.sleep(800);
           displaySafetyBateryLevel(iconBateria);
-        //}
-
+        }
+  
+        
+        
+        
+        
         
         // Handler REGISTRO EN BASE DE DATOS
         //
         registraMedicionDB();
 
+
         
-        // Handler SMS
+        // Handler SMS recibidos y respuestas en base a KeyWords
+        // 
         reciveSMS();
         if(iconSMS == "IN")
             displaySmsMsg();
         handleCommandSMS(lastSMSRecibed);
+
 
 
         // Handler Confirmación si tiene un celular de guardia válido
@@ -204,7 +245,7 @@ void loop() {
         if(memFlash.valid == false){
           displayWarningCeluGuardia();
           iconAlerta = true;
-          delay(1500);
+          Watchdog.sleep(1500);
         }
         else {
           iconAlerta = false;
@@ -227,4 +268,10 @@ void loop() {
         ultimoCicloHeader = millis();   
         displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
    }
+   
+   ledFlashing();                  // Flashing del LedBuitIn de la placa cada n milisegundos
+   
+//   #ifdef USBCON
+//     USBDevice.attach();
+//   #endif
 }

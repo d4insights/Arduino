@@ -107,10 +107,10 @@ void loop() {
         }
         if(iconBateria >= 1.0 && iconSMS == "OUT")
           iconSMS = "";
-        if(iconBateria < 3.8){
+       // if(iconBateria < 3.8){
           displaySafetyBateryLevel(iconBateria);
           delay(1000);
-        }
+        //}
         registraDBvLIPO();
 
         

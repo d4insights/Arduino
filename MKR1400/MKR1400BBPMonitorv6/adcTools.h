@@ -62,12 +62,14 @@ void sendRequestACModule(){
 
 float readADCVolaje(int pin){
   float voltage = 0.0;
+  
+  analogReadResolution(12);                   // Aumenta la precisión de la pata abalogina de 0-1023 a 0-4096  
   int aux = analogRead(pin);
-  delay(50);
+  
   if (pin == 0)
       voltage =  aux * (4.5714 / 4095.0);
   else
-      voltage =  aux * (16.434855 / 4095.0);
+      voltage =  aux * (13.6454 / 4095.0);
   
   Serial.print("BAT");
   Serial.print(pin);
@@ -77,8 +79,8 @@ float readADCVolaje(int pin){
   Serial.print(voltage);
   Serial.println("v");
   
-//  if (voltage < 0.5)                    // Serviría para planchar el voltaje cercano a 0 si fluctúa
-//     voltage = 0;
+  if (voltage < 1)                    // Serviría para planchar el voltaje cercano a 0 si fluctúa
+     voltage = 0;
      
   return voltage;   
 }

@@ -295,31 +295,37 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
   }
 
   // ICONO de Nivel de Bateria
-  if(bateria <= 2.7){
+  //if(bateria <= 2.7){
+  if(bateria <= 10.5){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería vacía
     u8g2.drawLine(120, 0, 128, 8); 
   } 
 
-  if(bateria > 2.7 && bateria <= 3.5){
+  //if(bateria > 2.7 && bateria <= 3.5){
+  if(bateria > 10.5 && bateria <= 11.4){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 25%
     u8g2.drawBox(120,2,2,4);
   }
 
-  if(bateria > 3.5 && bateria <= 3.8){
+  
+  //if(bateria > 3.5 && bateria <= 3.8){
+  if(bateria > 11.4 && bateria <= 11.8){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 50%
     u8g2.drawBox(120,2,3,4);
   }
 
-  if(bateria > 3.8 && bateria <= 4.08){
+  //if(bateria > 3.8 && bateria <= 4.08){
+  if(bateria > 11.8 && bateria <= 12.2){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 75%
     u8g2.drawBox(120,2,5,4);
   }
-    
-  if (bateria > 4.08){
+
+  //if (bateria > 4.08){  
+  if (bateria > 12.2){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"I");                            // batería llena
   }
@@ -344,7 +350,7 @@ void startOled(){
    u8g2.setFont( u8g2_font_helvB08_tf);          
    u8g2.drawStr(14,62,"www.d4insghts.com");      
    u8g2.sendBuffer();   
-   delay(1000);                        
+   //delay(1000);                        
 }
 
 
@@ -364,7 +370,7 @@ void drawImagebbp() {
    u8g2.setFont(u8g2_font_5x7_tf);
    u8g2.drawStr(124,63,"i"); 
    u8g2.sendBuffer();   
-   delay(2000); 
+   //delay(2000); 
 }
 
 
@@ -392,7 +398,7 @@ void displayReloj(String dia, String hora){
 void displaySafetyBateryLevel(float iconBateria){
   
   char volts[10];
-  String aux= String(iconBateria,2);
+  String aux= String(iconBateria,1);
   aux.toCharArray(volts,10);
   
   displayBorraBodyPantalla();
@@ -543,14 +549,14 @@ void displayBatteriesLevel(){
 
   
   u8g2.drawLine(20, 25, 20, 55);              // tabique de adelante
-  u8g2.drawLine(76, 25, 76, 55);              // tabique del medio
+  u8g2.drawLine(78, 25, 78, 55);              // tabique del medio
   u8g2.drawLine(23, 40, 125, 40);             // línea de división a mitad de la pantalla
   
   u8g2.setFont(u8g2_font_fub11_tn);   
   u8g2.drawStr(29,37,bat01);                  // Reemplazar por valores reales de medición de voltaje
-  u8g2.drawStr(86,37,bat02);
+  u8g2.drawStr(83,37,bat02);
   u8g2.drawStr(29,64,bat03);
-  u8g2.drawStr(86,64,bat04);
+  u8g2.drawStr(83,64,bat04);
     
   u8g2.sendBuffer();         
 }
