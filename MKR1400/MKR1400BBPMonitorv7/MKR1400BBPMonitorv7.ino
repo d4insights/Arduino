@@ -8,7 +8,7 @@
 */
 
 // Definición de las variables de ICONOS de Estados del HEADER
-String modoMKR1400    = "4g no iniciado";      // Mensaje general
+String modoMKR1400    = "4g no iniciado";        // Mensaje general
 String myIMEI         = "";                      // IMEI de la SIM que tengo puesta
 bool iconAlerta       = false;                   // Alerte true or false
 String iconSMS        = "";                      // Mail OUT, IN o vacio para que no aparezca
@@ -47,7 +47,7 @@ bool alertaSMS = true;                        // Activas o silenciar las alertas
 #include "flashS.h"
 
 
-bool debugMode = true;                        // Poner en false cuando está en producción 
+bool debugMode = false;                        // Poner en false cuando está en producción 
 
 
 unsigned long ultimoCicloBody   = 6000;      // Auxiliar para manejo del período de tiempo entre ciclos de display cuerpo de pantalla
@@ -73,6 +73,9 @@ void setup() {
     }
     else 
       leeFlashStorage(); 
+
+    alertaSMS = false;
+    
   } else {
     leeFlashStorage();
     alertaSMS = true;  
@@ -117,7 +120,8 @@ void loop() {
 
         // Rutina de reconexión por si se pierde el 4G
         //
-        if(!gsmConnected){
+        if(!gsmAccess.ready()){
+            gsmConnected = false;
             displayError("4g Desconectado", "Reconectando..");
             delay(1000);
             modemConnect();
@@ -264,14 +268,16 @@ void loop() {
           newCeluGuardia = "";
         }
 
-
+        ledFlashing();                  // Flashing del LedBuitIn de la placa cada n milisegundos
    }
+
+   
    if (millis() - ultimoCicloHeader >= intervalCicloHeader) {
         ultimoCicloHeader = millis();   
         displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
    }
    
-   ledFlashing();                  // Flashing del LedBuitIn de la placa cada n milisegundos
+   
    
 
 

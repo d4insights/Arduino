@@ -1,4 +1,4 @@
-/*
+﻿/*
   Emon.cpp - Library for openenergymonitor
   Created by Trystan Lea, April 27 2010
   GNU GPL
@@ -259,7 +259,7 @@ long EnergyMonitor::readVcc() {
   #elif defined(__arm__)
   return (3300);                                  //Arduino Due
   #else
-  return (3300);                                  //Guess that other un-supported architectures will be running a 3.3V!
+  return (5000);                                  //Guess that other un-supported architectures will be running a 3.3V!
   #endif
 }
 

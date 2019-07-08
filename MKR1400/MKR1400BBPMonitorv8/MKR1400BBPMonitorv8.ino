@@ -65,20 +65,19 @@ void setup() {
   
   Serial.begin(115200);
 
-  rtc.begin();                                // initialize RTC
-  //rtc.setEpoch(1451606400);                   // Jan 1, 2016   1072926940
-
   Wire.begin();
 
   if(debugMode){          
     if(memFlash.valid == false){           
       String tel = String("1167577019");
       tel.toCharArray(celuGuardia,20);
-      memFlash.valid = true;  
-      alertaSMS = false;
+      memFlash.valid = true;    
     }
     else 
-      leeFlashStorage(); 
+      leeFlashStorage();
+    
+    alertaSMS = false;
+       
   } else {
     leeFlashStorage();
     alertaSMS = true;  
@@ -129,25 +128,11 @@ void loop() {
         }
 
 
-        // Handler del RELOJ
-        //
-        if(rtc.getYear()<18 || rtc.getYear()>25 ){
-          if(gsmAccess.begin(PINNUMBER) == GSM_READY)
-            setClock();                                     // Recupera la hora local y setea el reloj RTC
-        }
-        else{
-          displayReloj(rtcDia, rtcHora);
-          delay(1000);
-        }
-
-
-
         // Handler de lectura de AC
         //
         sendRequestACModule();
 
         
-
         // Handler ENTRADA Voltaje, Amperaje, Potencia 
         //
         displayInput();
@@ -281,16 +266,15 @@ void loop() {
           escribeFlashStorage();                     // Almacena el nuevo celular en la Flash Memory
           newCeluGuardia = "";
         }
-
-
+   
+        ledFlashing();                  // Flashing del LedBuitIn de la placa cada n milisegundos
    }
+   
    if (millis() - ultimoCicloHeader >= intervalCicloHeader) {
         ultimoCicloHeader = millis();   
         displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
    }
-   
-   ledFlashing();                  // Flashing del LedBuitIn de la placa cada n milisegundos
-   
+ 
 
 
 //   Para despertar el USB si use un sleepy watchdog

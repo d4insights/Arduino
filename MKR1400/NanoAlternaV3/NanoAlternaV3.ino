@@ -2,8 +2,8 @@
 #include <Wire.h>
 EnergyMonitor ctIN, ctOUT; // Create two instances
 
-const int LEDpin=13;
-const int ENPin =A7;
+const int LEDpin = 13;
+const int ENPin  = A7;          // Pata de Enabled para que se pueda usar el request (NO USADO)
 
 #define Banda 5000
 
@@ -20,11 +20,13 @@ void setup() {
   
   Serial.begin(115200);
   Serial.println("Medidor de Alterna Version 3");
+
   
   //Inicio los sensores de alterna
-  ctIN.voltage(A0,  218.2, 1.7);        // Calibration, phase_shift
-  ctOUT.voltage(A2, 215.194, 1.7);      // Calibration, phase_shift
-  ctIN.current(A1, 1.92377);            // CT channel 1, calibration. calibration (2000 turns / 22 Ohm burden resistor = 90.909)
+  ctIN.voltage(A1,  212.5, 1.7);           // CALIBRACION FINA (SOLO MODIFICAR EL PARAMETRO DEL MEDIO 1V por UNIDAD)
+  ctOUT.voltage(A0, 211, 1.7);         // CALIBRACION FINA (SOLO MODIFICAR EL PARAMETRO DEL MEDIO 1V por UNIDAD)
+ 
+  ctIN.current(A2, 1.92377);            // CT channel 1, calibration. calibration (2000 turns / 22 Ohm burden resistor = 90.909)
   ctOUT.current(A3, 1.92377);           // CT channel 2, calibration.
   
   //Inicio la comunicacion I2C
@@ -43,13 +45,13 @@ void loop() {
     
     //Mediciones
     
-    ctIN.calcVI(100,2000);                // Calculate all. No.of half wavelengths (crossings), time-out
+    ctIN.calcVI(10000,2000);                // Calculate all. No.of half wavelengths (crossings), time-out
     VIN = ctIN.Vrms ;         delay(50);
     IIN = ctIN.calcIrms(1484);delay(50);
     
-    ctOUT.calcVI(100,2000);               // Calculate all. No.of half wavelengths (crossings), time-out
+    ctOUT.calcVI(10000,2000);               // Calculate all. No.of half wavelengths (crossings), time-out
     VOUT = ctOUT.Vrms ;           delay(50);
-    //IOUT = ctOUT.calcIrms(1484);delay(50);
+    IOUT = ctOUT.calcIrms(1484);delay(50);
 
     //Filtros
 

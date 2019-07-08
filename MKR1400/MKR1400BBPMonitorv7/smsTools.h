@@ -21,8 +21,8 @@ long intervalSMSSafetyBatery         = 600000;                 // Manejo del per
 unsigned long ultimoSMSInversorBatery  = 600000;               // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
 long intervalSMSInversorBatery         = 600000;               // Manejo del período de tiempo entre SMS (así manda cada 10 min)
 
-unsigned long ultimoSMSRed            = 600000;               // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
-long intervalSMSRed                   = 600000;               // Manejo del período de tiempo entre SMS (así manda cada 10 min)
+unsigned long ultimoSMSRed            = 600000;                // Auxiliar para no mandar SMS todo el tiempo ante un fallo (así manda cada 10 min)
+long intervalSMSRed                   = 600000;                // Manejo del período de tiempo entre SMS (así manda cada 10 min)
 
 
 #include <MKRGSM.h>
@@ -56,7 +56,7 @@ void sendSMSTemporizedRed(char* cel,String msg){
     smsOutcome.print(txtMsg);
     smsOutcome.endSMS();
     Serial.println("SMS Sent !!!");
-  }
+ }
 }
 
 
@@ -225,7 +225,7 @@ void handleCommandSMS(String Command){
   }  
 
 
-  if ((Command.indexOf("reinicio")>=0 && commandExecuted == false) || (Command.indexOf("reboot")>=0 && commandExecuted == false)){
+  if ((Command.indexOf("reinic")>=0 && commandExecuted == false) || (Command.indexOf("reboot")>=0 && commandExecuted == false)){
     Serial.println("COMMAND.. reboot de MKR1400");
     commandExecuted = true;
     int countdownMS = Watchdog.enable(1000);

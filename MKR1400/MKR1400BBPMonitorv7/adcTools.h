@@ -83,7 +83,7 @@ float readADCVoltaje(int pin){
   if (pin == 0)
       voltage =  aux * (4.5714 / 4095.0);
   else
-      voltage =  aux * (13.10 / 4095.0);
+      voltage =  aux * (13.05 / 4095.0);
   
 //  Serial.print("BAT");
 //  Serial.print(pin);

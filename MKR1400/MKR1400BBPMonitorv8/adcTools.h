@@ -11,14 +11,14 @@
 char datosSensores[50] = {0};     //Aca guardo los datos de la trama de medición de AC Byte a Byte 
 
 
-const int largoMuestra = 20;                      // Largo de la muestra de lecturas DC
+const int largoMuestra = 20;                // Largo de la muestra de lecturas DC
 //float voltageArray00[largoMuestra];       // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray01[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray02[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray03[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray04[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 
-int   pVoltageArray = 0;          // Puntero al array de muestreo 
+int   pVoltageArray = 0;                    // Puntero al array de muestreo 
 
 
   
@@ -83,7 +83,7 @@ float readADCVoltaje(int pin){
   if (pin == 0)
       voltage =  aux * (4.5714 / 4095.0);
   else
-      voltage =  aux * (13.05 / 4095.0);
+      voltage =  aux * (13.45791934 / 4095.0);
   
 //  Serial.print("BAT");
 //  Serial.print(pin);
@@ -105,10 +105,10 @@ float readADCVoltaje(int pin){
 void muestreoTensionDC(){
 
   //voltageArray00[pVoltageArray] = readADCVoltaje(0);
-  voltageArray01[pVoltageArray] = readADCVoltaje(1);
-  voltageArray02[pVoltageArray] = readADCVoltaje(2);
-  voltageArray03[pVoltageArray] = readADCVoltaje(3);
-  voltageArray04[pVoltageArray] = readADCVoltaje(4);
+  voltageArray01[pVoltageArray] = readADCVoltaje(4);
+  voltageArray02[pVoltageArray] = readADCVoltaje(3);
+  voltageArray03[pVoltageArray] = readADCVoltaje(2);
+  voltageArray04[pVoltageArray] = readADCVoltaje(1);
 
   Serial.print("Muestreo DC: ");
   Serial.print(pVoltageArray);
