@@ -148,6 +148,7 @@ void RTCZero::standbyMode()
   // Entering standby mode when connected
   // via the native USB port causes issues.
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+  __DSB();
   __WFI();
 }
 
@@ -420,12 +421,16 @@ void RTCZero::setEpoch(uint32_t ts)
     time_t t = ts;
     struct tm* tmp = gmtime(&t);
 
-    RTC->MODE2.CLOCK.bit.YEAR = tmp->tm_year - EPOCH_TIME_YEAR_OFF;
-    RTC->MODE2.CLOCK.bit.MONTH = tmp->tm_mon + 1;
-    RTC->MODE2.CLOCK.bit.DAY = tmp->tm_mday;
-    RTC->MODE2.CLOCK.bit.HOUR = tmp->tm_hour;
-    RTC->MODE2.CLOCK.bit.MINUTE = tmp->tm_min;
-    RTC->MODE2.CLOCK.bit.SECOND = tmp->tm_sec;
+    RTC_MODE2_CLOCK_Type clockTime;
+
+    clockTime.bit.YEAR = tmp->tm_year - EPOCH_TIME_YEAR_OFF;
+    clockTime.bit.MONTH = tmp->tm_mon + 1;
+    clockTime.bit.DAY = tmp->tm_mday;
+    clockTime.bit.HOUR = tmp->tm_hour;
+    clockTime.bit.MINUTE = tmp->tm_min;
+    clockTime.bit.SECOND = tmp->tm_sec;
+
+    RTC->MODE2.CLOCK.reg = clockTime.reg;
 
     while (RTCisSyncing())
       ;
@@ -444,7 +449,11 @@ void RTCZero::configureClock() {
   GCLK->GENDIV.reg = GCLK_GENDIV_ID(2)|GCLK_GENDIV_DIV(4);
   while (GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY)
     ;
+#ifdef CRYSTALLESS
+  GCLK->GENCTRL.reg = (GCLK_GENCTRL_GENEN | GCLK_GENCTRL_SRC_OSCULP32K | GCLK_GENCTRL_ID(2) | GCLK_GENCTRL_DIVSEL );
+#else
   GCLK->GENCTRL.reg = (GCLK_GENCTRL_GENEN | GCLK_GENCTRL_SRC_XOSC32K | GCLK_GENCTRL_ID(2) | GCLK_GENCTRL_DIVSEL );
+#endif
   while (GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY)
     ;
   GCLK->CLKCTRL.reg = (uint32_t)((GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK2 | (RTC_GCLK_ID << GCLK_CLKCTRL_ID_Pos)));
@@ -459,12 +468,14 @@ void RTCZero::configureClock() {
 /* Configure the 32768Hz Oscillator */
 void RTCZero::config32kOSC() 
 {
+#ifndef CRYSTALLESS
   SYSCTRL->XOSC32K.reg = SYSCTRL_XOSC32K_ONDEMAND |
                          SYSCTRL_XOSC32K_RUNSTDBY |
                          SYSCTRL_XOSC32K_EN32K |
                          SYSCTRL_XOSC32K_XTALEN |
                          SYSCTRL_XOSC32K_STARTUP(6) |
                          SYSCTRL_XOSC32K_ENABLE;
+#endif
 }
 
 /* Synchronise the CLOCK register for reading*/
