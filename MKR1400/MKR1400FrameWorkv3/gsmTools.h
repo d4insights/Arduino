@@ -11,18 +11,18 @@
 
 // AUTENTICACION MOVISTAR ARGENTINA
 //
-const char PINNUMBER[]     = "";                         // Este es el PIN de la SIM, anda igua si esta vacío
-const char GPRS_APN[]      = "wap.gprs.unifon.com.ar";       // GPRS APN
-const char GPRS_LOGIN[]    = "wap";                          // GPRS login
-const char GPRS_PASSWORD[] = "wap";                          // GPRS password
+//const char PINNUMBER[]     = "";                         // Este es el PIN de la SIM, anda igua si esta vacío
+//const char GPRS_APN[]      = "wap.gprs.unifon.com.ar";       // GPRS APN
+//const char GPRS_LOGIN[]    = "wap";                          // GPRS login
+//const char GPRS_PASSWORD[] = "wap";                          // GPRS password
 
 
 // AUTENTICACION CLARO ARGENTINA
 //
-//const char PINNUMBER[]     = "1111";                  // Este es el PIN de la SIM, anda igua si esta vacío
-//const char GPRS_APN[]      = "igprs.claro.com.ar";    // GPRS APN (provisto por CLARO ARGENTINA)
-//const char GPRS_LOGIN[]    = "clarogprs";             // GPRS login (puede ir vacío en CLARO)
-//const char GPRS_PASSWORD[] = "clarogprs";             // GPRS password (puede ir vacío en CLARO)
+const char PINNUMBER[]     = "1111";                  // Este es el PIN de la SIM, anda igua si esta vacío
+const char GPRS_APN[]      = "igprs.claro.com.ar";    // GPRS APN (provisto por CLARO ARGENTINA)
+const char GPRS_LOGIN[]    = "clarogprs";             // GPRS login (puede ir vacío en CLARO)
+const char GPRS_PASSWORD[] = "clarogprs";             // GPRS password (puede ir vacío en CLARO)
 
 
 
