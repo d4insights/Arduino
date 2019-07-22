@@ -16,6 +16,7 @@ bool iconSincro       = false;                   // Sincronización con Internet
 int iconSenal         = 0;                       // Señal de 4G true or false Varía entre 0 y 31 (mejor)
 float iconBateria     = 0;                       // Voltaje de la Batería auxiliar del MKR1400
 int SMSRetencion      = 0;
+int contrastePantalla = 200;                     // Contraste de la pantalla entre 0 y 255 
 
 //String myLocation = "";                          // Coordenadas satelitales del dispositivo
 
@@ -31,6 +32,8 @@ int     PIN = 0;                // Potencia de entrada      (Watts)
 float   VOUT = 0;               // Voltaje de salida        (Volts)
 float   IOUT = 0;               // Corriente de salida      (Amperes)
 int     POUT = 0;               // Potencia de salida       (Watts)
+
+float  porcBat = 0.0;           // Porcentaje de llenado de la batería de soporte del Inversor (donde esta conectado el MCI)
 
 
 // Deltas parta ajustar los valores de la medición desde el SMS
@@ -58,7 +61,7 @@ bool alertaSMS = true;                        // Activas o silenciar las alertas
 #include "smsTools.h" 
 #include "sh1106I2C.h" 
 #include "gsmTools.h"
-#include "mySQL.h" 
+//#include "mySQL.h" 
 #include "adcTools.h" 
 #include "flashS.h"
 
@@ -162,16 +165,16 @@ void loop() {
           String msg = "Alerta!!.. BAJA TENSION DE ENTRADA ";
           msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
           sendSMSTemporizedRed(celuGuardia, msg);
-          registraAlertaDB("A","AC", String(VIN,2), "BAJA_Tension_de_entrada");
+          //registraAlertaDB("A","AC", String(VIN,2), "BAJA_Tension_de_entrada");
         } 
-        if(VIN > 240 && alertaSMS){
+        if(VIN > 245 && alertaSMS){
           iconSMS = "OUT";
           String msg = "Alerta!!.. ALTA TENSION DE ENTRADA ";
           msg = msg + '\n' + "VIN:" + (String) VIN + "v" + '\n' + "d4i:" + myIMEI;
           sendSMSTemporizedRed(celuGuardia, msg);
-          registraAlertaDB("A","AC", String(VIN,2), "ALTA_Tension_de_entrada");
+          //registraAlertaDB("A","AC", String(VIN,2), "ALTA_Tension_de_entrada");
         }
-        if(VIN >= 190 && VIN <= 240 && iconSMS == "OUT")
+        if(VIN >= 190 && VIN <= 245 && iconSMS == "OUT")
           iconSMS = "";
         delay(1500);
 
@@ -185,7 +188,7 @@ void loop() {
           String msg = "Alerta!!.. CONSUMO DE SALIDA EXCESIVO ";
           msg = msg + '\n' + "IOUT:" + (String) IOUT + "a" + '\n' + "d4i:" + myIMEI;
           sendSMSTemporizedRed(celuGuardia, msg);
-          registraAlertaDB("A","AC",String(IOUT,2), "EXCESIVO_Consumo_de_salida");
+          //registraAlertaDB("A","AC",String(IOUT,2), "EXCESIVO_Consumo_de_salida");
         }
         if(IOUT <= 4 && iconSMS == "OUT")
           iconSMS = "";
@@ -203,24 +206,24 @@ void loop() {
         //
 
         medicionDCNormalizada();
-
-        if((bateria01 < 11.0 || bateria02 < 11.0 || bateria03 < 11.0 || bateria03 < 11.0)  && alertaSMS){
-          iconSMS = "OUT";
-          iconAlerta = false;
-          String msg = "Alerta!!.. BATERIAS DE SOPORTE DEL INVERSOR ";
-          msg = msg + '\n' + "Bat01:"+ (String) bateria01 + "v, Bat02:" + (String) bateria02 + "v, Bat03:" + (String) bateria03 + "v, Bat04:" + (String) bateria04 + "v" + '\n' + "d4i:" + myIMEI;
-          sendSMSTemporizedIBat(celuGuardia, msg);
-          float MIN = 50.0;
-          if (MIN > bateria01)
-              MIN = bateria01;
-          if (MIN > bateria02)
-              MIN = bateria02;
-          if (MIN > bateria03)
-              MIN = bateria03;
-          if (MIN > bateria04)
-              MIN = bateria04;              
-          registraAlertaDB("M","DC", String(MIN,2), "BAJA_CARGA_Bateria_de_Soporte_Inversor");
-        }        
+//
+//        if((bateria01 < 11.0 || bateria02 < 11.0 || bateria03 < 11.0 || bateria03 < 11.0)  && alertaSMS){
+//          iconSMS = "OUT";
+//          iconAlerta = false;
+//          String msg = "Alerta!!.. BATERIAS DE SOPORTE DEL INVERSOR ";
+//          msg = msg + '\n' + "Voltaje:"+ (String) bateria01 + "v" + '\n' + "d4i:" + myIMEI;
+//          sendSMSTemporizedIBat(celuGuardia, msg);
+//          float MIN = 50.0;
+//          if (MIN > bateria01)
+//              MIN = bateria01;
+//          if (MIN > bateria02)
+//              MIN = bateria02;
+//          if (MIN > bateria03)
+//              MIN = bateria03;
+//          if (MIN > bateria04)
+//              MIN = bateria04;              
+//          registraAlertaDB("M","DC", String(MIN,2), "BAJA_CARGA_Bateria_de_Soporte_Inversor");
+//        }        
         displayBatteriesLevel();
          
 
@@ -232,23 +235,23 @@ void loop() {
         //iconBateria = (bateria01 + bateria02 + bateria03 + bateria04) / 4;
 
         //if(iconBateria < 2.7 && alertaSMS){
-//        if(iconBateria < 10.5 && alertaSMS){
-//          iconSMS = "OUT";
-//          String msg = "Alerta!!.. BATERIA DE CONTINGENCIA ";
-//          msg = msg + '\n' + "BatCont:" + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
-//          sendSMSTemporizedSBat(celuGuardia, msg);
-//          registraAlertaDB("B","DC",String(iconBateria,2), "BAJA_CARGA_Bateria_de_Contingencia");
-//        }
-//        
-//        //if(iconBateria >= 2.7 && iconSMS == "OUT")
-//        if(iconBateria >= 10.5 && iconSMS == "OUT")
-//          iconSMS = "";
-//        
-//        //if(iconBateria < 3.8){
-//        if(iconBateria < 12){
-//          delay(800);
-//          displaySafetyBateryLevel(iconBateria);
-//        }
+        if(iconBateria < 12 && alertaSMS){
+          iconSMS = "OUT";
+          String msg = "Alerta!!.. BATERIAS DE SOPORTE BAJO NIVEL ";
+          msg = msg + '\n' + "Voltaje:" + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
+          sendSMSTemporizedSBat(celuGuardia, msg);
+          //registraAlertaDB("B","DC",String(iconBateria,2), "BAJA_CARGA_Bateria_de_Contingencia");
+        }
+        
+        //if(iconBateria >= 2.7 && iconSMS == "OUT")
+        if(iconBateria >= 12 && iconSMS == "OUT")
+          iconSMS = "";
+        
+        //if(iconBateria < 3.8){
+        if(iconBateria < 12){
+          delay(800);
+          displaySafetyBateryLevel(iconBateria);
+        }
       
         
        
@@ -295,10 +298,4 @@ void loop() {
         displayHeader(modoMKR1400, iconAlerta, iconSMS, iconSincro, iconSenal, iconBateria);         // Imprime el estado en el Footer de la pantallita OLED
    }
  
-
-
-//   Para despertar el USB si use un sleepy watchdog
-//   #ifdef USBCON
-//     USBDevice.attach();
-//   #endif
 }

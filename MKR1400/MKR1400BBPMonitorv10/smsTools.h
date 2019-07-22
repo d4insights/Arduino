@@ -242,28 +242,28 @@ void handleCommandSMS(String Command){
     sendSMSDirect(nCelu, rta);
     conteste = true;
   }
-
-  if (Command.indexOf("bater")>=0 && commandExecuted == false){
-    Serial.println("COMMAND.. estado de las baterias de Soporte");
-    commandExecuted = true;
-    String rta = "Baterias de Soporte del Inversor ";
-    rta = rta + '\n' + "Bat01:"+ (String) bateria01 + "v, Bat02:" + (String) bateria02 + "v, Bat03:" + (String) bateria03 + "v, Bat04:" + (String) bateria04 + "v" + '\n' + "d4i:" + myIMEI;
-    char nCelu[20];
-    lastSMSSenderN.toCharArray(nCelu,20);
-    sendSMSDirect(nCelu, rta);
-    conteste = true;
-  }
-  
-//  if ((Command.indexOf("conting")>=0 && commandExecuted == false) || (Command.indexOf("safety")>=0 && commandExecuted == false)){
-//    Serial.println("COMMAND.. estado de la Safety Battery");
+//
+//  if (Command.indexOf("bater")>=0 && commandExecuted == false){
+//    Serial.println("COMMAND.. estado de las baterias de Soporte");
 //    commandExecuted = true;
-//    String rta = "La bateria de respaldo tiene una carga de ";
-//    rta = rta + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
+//    String rta = "Baterias de Soporte del Inversor ";
+//    rta = rta + '\n' + "Bat01:"+ (String) bateria01 + "v, Bat02:" + (String) bateria02 + "v, Bat03:" + (String) bateria03 + "v, Bat04:" + (String) bateria04 + "v" + '\n' + "d4i:" + myIMEI;
 //    char nCelu[20];
 //    lastSMSSenderN.toCharArray(nCelu,20);
 //    sendSMSDirect(nCelu, rta);
 //    conteste = true;
-//  }  
+//  }
+  
+  if ((Command.indexOf("conting")>=0 && commandExecuted == false) || (Command.indexOf("bater")>=0 && commandExecuted == false)){
+    Serial.println("COMMAND.. estado de las baterias de respaldo");
+    commandExecuted = true;
+    String rta = "La baterias de respaldo tienen una carga de: ";
+    rta = rta + (String) iconBateria + "v" + '\n' + "d4i:" + myIMEI;
+    char nCelu[20];
+    lastSMSSenderN.toCharArray(nCelu,20);
+    sendSMSDirect(nCelu, rta);
+    conteste = true;
+  }  
 
 
   if ((Command.indexOf("reinic")>=0 && commandExecuted == false) || (Command.indexOf("reboot")>=0 && commandExecuted == false)){

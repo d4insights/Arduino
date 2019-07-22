@@ -52,33 +52,33 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 //   u8g2.drawStr(15,50,"W");                             // Sincronizando
 
 
-// LOGO d4i
-#define d4i_Logo_width 52
-#define d4i_Logo_height 36
-static const unsigned char d4i_Logo_bits[] U8X8_PROGMEM = {
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0x01, 
-  0x00, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0x80, 0x07, 0x00, 0x00, 0x00, 
-  0xE0, 0x01, 0xC0, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0xC0, 0x07, 0x00, 
-  0x00, 0x00, 0xE0, 0x01, 0xE0, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0xF0, 
-  0x07, 0x00, 0x00, 0xE0, 0xEF, 0x01, 0xF0, 0x07, 0x00, 0x00, 0xF0, 0xFF, 
-  0x01, 0xB8, 0x07, 0x00, 0x00, 0xF8, 0xFF, 0x01, 0x9C, 0x07, 0x00, 0x00, 
-  0x3C, 0xF8, 0x01, 0x9E, 0x07, 0x00, 0x00, 0x0E, 0xE0, 0x01, 0x8F, 0x07, 
-  0x00, 0x03, 0x0E, 0xE0, 0x81, 0x87, 0x07, 0x00, 0x06, 0x0F, 0xE0, 0x81, 
-  0x83, 0x07, 0x00, 0x03, 0x0F, 0xE0, 0xC1, 0x81, 0x07, 0x80, 0x01, 0x0F, 
-  0xE0, 0xE1, 0x80, 0x07, 0x00, 0x00, 0x0F, 0xE0, 0xE1, 0x80, 0x07, 0x00, 
-  0x00, 0x0F, 0xE0, 0x71, 0x80, 0x07, 0x00, 0x00, 0x0F, 0xE0, 0xF1, 0xFF, 
-  0x7F, 0x30, 0x00, 0x0F, 0xE0, 0xF1, 0xFF, 0x7F, 0x28, 0x00, 0x0E, 0xE0, 
-  0x01, 0x80, 0x07, 0x34, 0x00, 0x0E, 0xE0, 0x01, 0x80, 0x07, 0x1C, 0x00, 
-  0x1C, 0xE0, 0x01, 0x80, 0x07, 0x0A, 0x00, 0x3C, 0xF8, 0x01, 0x80, 0x07, 
-  0x0E, 0x00, 0xF8, 0xFF, 0x01, 0x80, 0x07, 0x07, 0x00, 0xF0, 0xDF, 0x01, 
-  0x80, 0x07, 0x06, 0x03, 0xC0, 0x03, 0x00, 0x00, 0x80, 0x83, 0x01, 0x00, 
-  0x00, 0x00, 0x00, 0x80, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-
-};
+//// LOGO d4i
+//#define d4i_Logo_width 52
+//#define d4i_Logo_height 36
+//static const unsigned char d4i_Logo_bits[] U8X8_PROGMEM = {
+//  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+//  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0x01, 
+//  0x00, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0x80, 0x07, 0x00, 0x00, 0x00, 
+//  0xE0, 0x01, 0xC0, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0xC0, 0x07, 0x00, 
+//  0x00, 0x00, 0xE0, 0x01, 0xE0, 0x07, 0x00, 0x00, 0x00, 0xE0, 0x01, 0xF0, 
+//  0x07, 0x00, 0x00, 0xE0, 0xEF, 0x01, 0xF0, 0x07, 0x00, 0x00, 0xF0, 0xFF, 
+//  0x01, 0xB8, 0x07, 0x00, 0x00, 0xF8, 0xFF, 0x01, 0x9C, 0x07, 0x00, 0x00, 
+//  0x3C, 0xF8, 0x01, 0x9E, 0x07, 0x00, 0x00, 0x0E, 0xE0, 0x01, 0x8F, 0x07, 
+//  0x00, 0x03, 0x0E, 0xE0, 0x81, 0x87, 0x07, 0x00, 0x06, 0x0F, 0xE0, 0x81, 
+//  0x83, 0x07, 0x00, 0x03, 0x0F, 0xE0, 0xC1, 0x81, 0x07, 0x80, 0x01, 0x0F, 
+//  0xE0, 0xE1, 0x80, 0x07, 0x00, 0x00, 0x0F, 0xE0, 0xE1, 0x80, 0x07, 0x00, 
+//  0x00, 0x0F, 0xE0, 0x71, 0x80, 0x07, 0x00, 0x00, 0x0F, 0xE0, 0xF1, 0xFF, 
+//  0x7F, 0x30, 0x00, 0x0F, 0xE0, 0xF1, 0xFF, 0x7F, 0x28, 0x00, 0x0E, 0xE0, 
+//  0x01, 0x80, 0x07, 0x34, 0x00, 0x0E, 0xE0, 0x01, 0x80, 0x07, 0x1C, 0x00, 
+//  0x1C, 0xE0, 0x01, 0x80, 0x07, 0x0A, 0x00, 0x3C, 0xF8, 0x01, 0x80, 0x07, 
+//  0x0E, 0x00, 0xF8, 0xFF, 0x01, 0x80, 0x07, 0x07, 0x00, 0xF0, 0xDF, 0x01, 
+//  0x80, 0x07, 0x06, 0x03, 0xC0, 0x03, 0x00, 0x00, 0x80, 0x83, 0x01, 0x00, 
+//  0x00, 0x00, 0x00, 0x80, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 
+//  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 
+//  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+//  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+//
+//};
 
 #define bbp_Logo_width 78
 #define bbp_Logo_height 35
@@ -207,6 +207,26 @@ void displayWarningCeluGuardia(){
   u8g2.sendBuffer();    
 }
 
+
+void displayWarningErrorMedicion(){
+  
+  displayBorraBodyPantalla();
+  
+  u8g2.setFont( u8g2_font_open_iconic_embedded_4x_t);
+  u8g2.drawStr(4,53,"G");                             // Signo de Exclamación
+  
+  u8g2.setFont( u8g2_font_helvB08_tf);          
+  u8g2.drawStr(43,30,"Medicion AC");
+  u8g2.drawStr(43,50,"erronea");
+        
+  u8g2.setFont(u8g2_font_timR08_tr);            
+  u8g2.drawStr(114,62,"d4");
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(124,63,"i"); 
+  u8g2.sendBuffer();    
+}
+
+
 void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal, float bateria){  
 
   if(iconAlerta)
@@ -303,7 +323,7 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
   } 
 
   //if(bateria > 2.7 && bateria <= 3.5){
-  if(bateria > 10.5 && bateria <= 11.4){
+  if(bateria > 10.5 && bateria <= 11){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 25%
     u8g2.drawBox(120,2,2,4);
@@ -311,21 +331,21 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
 
   
   //if(bateria > 3.5 && bateria <= 3.8){
-  if(bateria > 11.4 && bateria <= 11.8){
+  if(bateria > 11 && bateria <= 12){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 50%
     u8g2.drawBox(120,2,3,4);
   }
 
   //if(bateria > 3.8 && bateria <= 4.08){
-  if(bateria > 11.8 && bateria <= 12.2){
+  if(bateria > 12 && bateria <= 13){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"@");                            // batería 75%
     u8g2.drawBox(120,2,5,4);
   }
 
   //if (bateria > 4.08){  
-  if (bateria > 12.2){
+  if (bateria > 13){
     u8g2.setFont(u8g2_font_open_iconic_embedded_1x_t);
     u8g2.drawStr(120,8,"I");                            // batería llena
   }
@@ -336,22 +356,22 @@ void displayHeader(String texto, bool alerta, String sms, bool sincro, int senal
 }
 
 
-// Inicia el OLED y pone el icono de d4i
-void startOled(){
-
-   // see http://blog.squix.org/2015/05/esp8266-nodemcu-how-to-create-xbm.html
-   // on how to create xbm files
-   
-   u8g2.begin();                                // Inicia el display  
-   u8g2.enableUTF8Print();
-   u8g2.clear();  
-   u8g2.setContrast(255);                        // Setea el contraste de la pantalla 0 a 255                                 
-   u8g2.drawXBMP(36, 10, d4i_Logo_width, d4i_Logo_height, d4i_Logo_bits); 
-   u8g2.setFont( u8g2_font_helvB08_tf);          
-   u8g2.drawStr(14,62,"www.d4insghts.com");      
-   u8g2.sendBuffer();   
-   //delay(1000);                        
-}
+//// Inicia el OLED y pone el icono de d4i
+//void startOled(){
+//
+//   // see http://blog.squix.org/2015/05/esp8266-nodemcu-how-to-create-xbm.html
+//   // on how to create xbm files
+//   
+//   u8g2.begin();                                // Inicia el display  
+//   u8g2.enableUTF8Print();
+//   u8g2.clear();  
+//   u8g2.setContrast(contrastePantalla);         // Setea el contraste de la pantalla 0 a 255                                 
+//   u8g2.drawXBMP(36, 10, d4i_Logo_width, d4i_Logo_height, d4i_Logo_bits); 
+//   u8g2.setFont( u8g2_font_helvB08_tf);          
+//   u8g2.drawStr(14,62,"www.d4insghts.com");      
+//   u8g2.sendBuffer();   
+//   //delay(1000);                        
+//}
 
 
 // Logo de bbp
@@ -361,7 +381,7 @@ void drawImagebbp() {
    u8g2.begin();                                // Inicia el display  
    u8g2.enableUTF8Print();
    u8g2.clear();          
-   u8g2.setContrast(100);                        // Setea el contraste de la pantalla 0 a 255                 
+   u8g2.setContrast(contrastePantalla);         // Setea el contraste de la pantalla 0 a 255                 
    u8g2.drawXBMP(24, 7, bbp_Logo_width, bbp_Logo_height, bbp_Logo_bits); 
    u8g2.setFont( u8g2_font_helvB08_tf);          
    u8g2.drawStr(37,55,"BBP Group");      
@@ -399,28 +419,29 @@ void drawImagebbp() {
 
 
 
-//void displaySafetyBateryLevel(float iconBateria){
-//  
-//  char volts[10];
-//  String aux= String(iconBateria,1);
-//  aux.toCharArray(volts,10);
-//  
-//  displayBorraBodyPantalla();
-//
-//  u8g2.setFontMode(1);   
-//  u8g2.setFont(u8g2_font_6x10_tf);   
-//  u8g2.drawStr(5,40,"BATERIA");
-//  u8g2.drawStr(5,50,"RESPALDO");
-//  u8g2.drawStr(120,50,"v");
-//  u8g2.drawLine(55, 25, 55, 55); 
-//  u8g2.setFont(u8g2_font_fub17_tn);   
-//  u8g2.drawStr(68,50,volts);
-//  u8g2.sendBuffer();         
-//
-//}
+void displaySafetyBateryLevel(float iconBateria){
+  
+  char volts[10];
+  String aux= String(iconBateria,1);
+  aux.toCharArray(volts,10);
+  
+  displayBorraBodyPantalla();
+
+  u8g2.setFontMode(1);   
+  u8g2.setFont(u8g2_font_6x10_tf);   
+  u8g2.drawStr(5,40,"BATERIAS");
+  u8g2.drawStr(5,50,"RESPALDO");
+  u8g2.drawStr(120,50,"v");
+  u8g2.drawLine(55, 25, 55, 55); 
+  u8g2.setFont(u8g2_font_fub17_tn);   
+  u8g2.drawStr(68,50,volts);
+  u8g2.sendBuffer();         
+
+}
 
 
 // Muestra en el display los resultados de la medición del INPUT del Inversor
+//
 void displayInput(){
 
   char volts[10];
@@ -449,11 +470,11 @@ void displayInput(){
   
   u8g2.drawLine(20, 25, 20, 55); 
   u8g2.setFont(u8g2_font_fub14_tn);   
-  if(VIN>0)
+  if(VIN>10)
     u8g2.drawStr(32,29,volts);
   else
     u8g2.drawStr(32,29,"0");
-  if(IIN>0)
+  if(IIN>0.017)
     u8g2.drawStr(32,46,ampers);
   else
     u8g2.drawStr(32,46,"0");
@@ -463,6 +484,7 @@ void displayInput(){
 }
 
 // Muestra en el display los resultados de la medición del OUTPUT del Inversor
+//
 void displayOutput(){
 
   char volts[10];
@@ -490,11 +512,11 @@ void displayOutput(){
   
   u8g2.drawLine(20, 25, 20, 55); 
   u8g2.setFont(u8g2_font_fub14_tn);   
-  if(VOUT>0)
+  if(VOUT>10)
     u8g2.drawStr(32,29,volts);
   else
     u8g2.drawStr(32,29,"0");
-  if(IOUT>0)
+  if(IOUT>0.017)
     u8g2.drawStr(32,46,ampers);
   else
     u8g2.drawStr(32,46,"0");
@@ -512,6 +534,10 @@ void displayBatteriesLevel(){
   char bat01[10];                              // Bateria 04 de soporte del INVERSOR 
   String aux= String(bateria01,1);
   aux.toCharArray(bat01,10);
+
+  char porc[10];                              // Porcentaje de Batería disponible
+  String aux1= String(porcBat,1);
+  aux1.toCharArray(porc,10);
   
   displayBorraBodyPantalla();
 
@@ -532,7 +558,7 @@ void displayBatteriesLevel(){
   else
     u8g2.drawStr(32,35,"0");
 
-  u8g2.drawStr(32,58,"100");          /// Cambiar después por el cálculo
+  u8g2.drawStr(32,58,porc);          /// Cambiar después por el cálculo
     
   u8g2.sendBuffer();         
 }

@@ -11,7 +11,7 @@
 char datosSensores[50] = {0};     //Aca guardo los datos de la trama de medición de AC Byte a Byte 
 
 
-const int largoMuestra = 20;                // Largo de la muestra de lecturas DC
+const int largoMuestra = 50;                // Largo de la muestra de lecturas DC
 //float voltageArray00[largoMuestra];       // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray01[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
 float voltageArray02[largoMuestra];         // Array que guarda el muestreo de mediciones de tensión de 5 baterías
@@ -21,53 +21,67 @@ float voltageArray04[largoMuestra];         // Array que guarda el muestreo de m
 int   pVoltageArray = 0;                    // Puntero al array de muestreo 
 
 
-  
 
-//Decodifico los datos provenientes del micro de sensores, guardando los datos adonde corresponde
-//
-void decodificacionTramaAC(){
-  float VI,VO,II,IO;
-  
-  VI  = datosSensores[0] * 100 + datosSensores[1] * 10 + datosSensores[2] + (float)datosSensores[3] / 10.0 + (float)datosSensores[4] / 100.0;
-  VO = datosSensores[5] * 100 + datosSensores[6] * 10 + datosSensores[7] + (float)datosSensores[8] / 10.0 + (float)datosSensores[9] / 100.0;
-  
-  II = datosSensores[10] + (float)datosSensores[11] / 10.0 + (float)datosSensores[12] / 100.00 +  (float)datosSensores[13] / 1000.0  + (float)datosSensores[14] / 10000.0;
-  IO = datosSensores[15] + (float)datosSensores[16] / 10.0 + (float)datosSensores[17] / 100.00 +  (float)datosSensores[18] / 1000.0  + (float)datosSensores[14] / 10000.0;
-
-  if(VI < 300 && VO < 300 && II < 10 && IO < 10){
-    VIN  = VI + mydeltaVIN.toFloat();
-    VOUT = VO + mydeltaVOUT.toFloat();
-    IOUT = IO + mydeltaIOUT.toFloat();
-    IIN  = II + mydeltaIIN.toFloat();
-    
-    Serial.print("Mediciones AC --> VIN: ");
-    Serial.print(VIN);
-    Serial.print(" | VOUT: ");
-    Serial.print(VOUT);
-    Serial.print(" | IIN: ");
-    Serial.print(IIN,2);
-    Serial.print(" | IOUT: ");
-    Serial.println(IOUT,2);
-    PIN  = VIN * IIN;
-    POUT = VOUT * IOUT;   
-  }
-}
-
-
-
+// Request al NANO para que me devuelva las medicines de AC
+// 
 void sendRequestACModule(){
-  int pos = 0;
-  Wire.requestFrom(8, 21);              // Manda la petición al dispositivo 8 y espera recibir 21 bytes
-  Serial.print("Trama Recibida:<");
-  while(Wire.available())               // slave may send less than requested
-  { 
-    char c = Wire.read();               // receive a byte as character
-    datosSensores[pos] = c - 48;
-    pos++;
-    Serial.print(c);           
+
+  Wire.requestFrom(8, 100);              // Manda la petición al dispositivo 8 y espera recibir 100 bytes
+
+  int espera = 0;
+  while(!Wire.available() && espera<100){
+    espera++;
+    delay(1);
   }
-  Serial.println(">");  
-  decodificacionTramaAC();
+ 
+  float VINaux  = Wire.readStringUntil('|').toFloat();
+  float IINaux  = Wire.readStringUntil('|').toFloat();
+  int   PINaux  = Wire.readStringUntil('|').toInt(); 
+  float VOUTaux = Wire.readStringUntil('|').toFloat();
+  float IOUTaux = Wire.readStringUntil('|').toFloat();
+  int   POUTaux = Wire.readStringUntil('|').toInt();
+  
+  if(Wire.readStringUntil('!') == "FIN"){
+     VIN  = VINaux;
+     IIN  = IINaux;
+     PIN  = PINaux;
+     VOUT = VOUTaux;
+     IOUT = IOUTaux;
+     POUT = POUTaux;
+ 
+     Serial.print("VIN: ");
+     Serial.print(VIN);
+     Serial.print(" | IIN: ");
+     Serial.print(IIN);
+     Serial.print(" | PIN: ");
+     Serial.print(PIN);
+     Serial.print(" | VOUT: ");
+     Serial.print(VOUT);
+     Serial.print(" | IOUT: ");
+     Serial.print(IOUT);
+     Serial.print(" | POUT: ");
+     Serial.println(POUT);
+  }
+  else
+  {
+    Serial.println("OJO.. La lectura de la trama no tiene el FIN de transmisión !!!");
+    displayWarningErrorMedicion();
+  }
+
+
+  Serial.print("VIN: ");
+  Serial.print(VIN);
+  Serial.print(" | IIN: ");
+  Serial.print(IIN);
+  Serial.print(" | PIN: ");
+  Serial.print(PIN);
+  Serial.print(" | VOUT: ");
+  Serial.print(VOUT);
+  Serial.print(" | IOUT: ");
+  Serial.print(IOUT);
+  Serial.print(" | POUT: ");
+  Serial.println(POUT);
+  
 }
 
 
@@ -78,23 +92,24 @@ void sendRequestACModule(){
 float readADCVoltaje(int pin){
   float voltage = 0.0;
   
-//  float coef05V = 4.5714;                     // Coeficiente Multiplicador del divisor resistivo 5V
-  float coef12V = 14.359120;                  // Coeficiente Multiplicador del divisor resistivo 12V
+//  float coef05V = 4.5714;                   // Coeficiente Multiplicador del divisor resistivo 5V
+  float coef12V = 14.3021393651;                  // Coeficiente Multiplicador del divisor resistivo 12V (Aprox.: 14.359120)
   
   analogReadResolution(12);                   // Aumenta la precisión de la pata abalogina de 0-1023 a 0-4096  
+  delay(100);                                 // Espero a que se nivele antes de medir  
   int aux = analogRead(pin);
-  delay(50);
+  delay(50);                                  // Separo mediciones por las dudas para que sea mas estable
 
 
   
 //  if (pin == 0)
 //      voltage =  (aux * (coef05V / 4095.0)) + mydeltaBAT0.toFloat();
-  if (pin == 1)
-      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT4.toFloat();
-  if (pin == 2)
-      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT3.toFloat();
-  if (pin == 3)
-      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT2.toFloat();
+//  if (pin == 1)
+//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT4.toFloat();
+//  if (pin == 2)
+//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT3.toFloat();
+//  if (pin == 3)
+//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT2.toFloat();
   if (pin == 4)
       voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT1.toFloat();
   
@@ -119,20 +134,20 @@ void muestreoTensionDC(){
 
   //voltageArray00[pVoltageArray] = readADCVoltaje(0);
   voltageArray01[pVoltageArray] = readADCVoltaje(4);
-  voltageArray02[pVoltageArray] = readADCVoltaje(3);
-  voltageArray03[pVoltageArray] = readADCVoltaje(2);
-  voltageArray04[pVoltageArray] = readADCVoltaje(1);
+  //voltageArray02[pVoltageArray] = readADCVoltaje(3);
+  //voltageArray03[pVoltageArray] = readADCVoltaje(2);
+  //voltageArray04[pVoltageArray] = readADCVoltaje(1);
 
-  Serial.print("Muestreo DC: ");
-  Serial.print(pVoltageArray);
-  Serial.print(" | Bat01: "); 
-  Serial.print(voltageArray01[pVoltageArray]); 
-  Serial.print(" | Bat02: ");
-  Serial.print(voltageArray02[pVoltageArray]);
-  Serial.print(" | Bat03: ");
-  Serial.print(voltageArray03[pVoltageArray]);
-  Serial.print(" | Bat04: ");
-  Serial.println(voltageArray04[pVoltageArray]);
+  //Serial.print("Muestreo DC: ");
+  //Serial.print(pVoltageArray);
+  //Serial.print(" | Bat01: "); 
+  //Serial.println(voltageArray01[pVoltageArray]); 
+  //Serial.print(" | Bat02: ");
+  //Serial.print(voltageArray02[pVoltageArray]);
+  //Serial.print(" | Bat03: ");
+  //Serial.print(voltageArray03[pVoltageArray]);
+  //Serial.print(" | Bat04: ");
+  //Serial.println(voltageArray04[pVoltageArray]);
   
   if(pVoltageArray<largoMuestra-1)
     pVoltageArray++;
@@ -150,32 +165,41 @@ void medicionDCNormalizada(){
   for(int a=0;a<largoMuestra;a++){
     //arrayPromedios[0] = arrayPromedios[0] + voltageArray00[a];
     arrayPromedios[1] = arrayPromedios[1] + voltageArray01[a];
-    arrayPromedios[2] = arrayPromedios[2] + voltageArray02[a];
-    arrayPromedios[3] = arrayPromedios[3] + voltageArray03[a];
-    arrayPromedios[4] = arrayPromedios[4] + voltageArray04[a];
+    //arrayPromedios[2] = arrayPromedios[2] + voltageArray02[a];
+    //arrayPromedios[3] = arrayPromedios[3] + voltageArray03[a];
+    //arrayPromedios[4] = arrayPromedios[4] + voltageArray04[a];
   }
 
   //iconBateria = arrayPromedios[0] / largoMuestra; 
   bateria01 = arrayPromedios[1] / largoMuestra;
-  bateria02 = arrayPromedios[2] / largoMuestra;
-  bateria03 = arrayPromedios[3] / largoMuestra;
-  bateria04 = arrayPromedios[4] / largoMuestra;
+  //bateria02 = arrayPromedios[2] / largoMuestra;
+  //bateria03 = arrayPromedios[3] / largoMuestra;
+  //bateria04 = arrayPromedios[4] / largoMuestra;
 
   // if(bateria01 < 1.5) bateria01=0;             // Plancho un error posible cuando las baterías estan desconectadas
-  if(bateria01 < 3.0) bateria01=0;              // Plancho un error posible cuando las baterías estan desconectadas
-  if(bateria02 < 3.0) bateria02=0;              // Plancho un error posible cuando las baterías estan desconectadas
-  if(bateria03 < 3.0) bateria03=0;              // Plancho un error posible cuando las baterías estan desconectadas
-  if(bateria04 < 3.0) bateria04=0;              // Plancho un error posible cuando las baterías estan desconectadas
+  if(bateria01 < 3.0) bateria01=0;                // Plancho un error posible cuando las baterías estan desconectadas
+  //if(bateria02 < 3.0) bateria02=0;              // Plancho un error posible cuando las baterías estan desconectadas
+  //if(bateria03 < 3.0) bateria03=0;              // Plancho un error posible cuando las baterías estan desconectadas
+  //if(bateria04 < 3.0) bateria04=0;              // Plancho un error posible cuando las baterías estan desconectadas
 
   Serial.print("Promedio DC");
   Serial.print(" | Bat01: "); 
-  Serial.print(bateria01);
-  Serial.print(" | Bat02: "); 
-  Serial.print(bateria02);
-  Serial.print(" | Bat03: "); 
-  Serial.print(bateria03);
-  Serial.print(" | Bat04: "); 
-  Serial.println(bateria04);
+  Serial.println(bateria01);
+  //Serial.print(" | Bat02: "); 
+  //Serial.print(bateria02);
+  //Serial.print(" | Bat03: "); 
+  //Serial.print(bateria03);
+  //Serial.print(" | Bat04: "); 
+  //Serial.println(bateria04);
   Serial.println();
+
+  
+  // Cálculo del Porcentaje de baterías restante
+  porcBat = map(bateria01, 10.5, 13.5, 0.0, 100.0);
+   
+
+  // Cálculo del tiempo de baterías (APROXIMACION)
+  // Hay que definir el cálculo 
+  // 
 
 }
