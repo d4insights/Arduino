@@ -26,47 +26,39 @@ int   pVoltageArray = 0;                    // Puntero al array de muestreo
 // 
 void sendRequestACModule(){
 
-  Wire.requestFrom(8, 100);              // Manda la petición al dispositivo 8 y espera recibir 100 bytes
+  Wire.requestFrom(8, 50);              // Manda la petición al dispositivo 8 y espera recibir 100 bytes
 
   int espera = 0;
   while(!Wire.available() && espera<100){
     espera++;
     delay(1);
   }
+
+  // Serial.println(Wire.readStringUntil('F'));
+
+
  
   float VINaux  = Wire.readStringUntil('|').toFloat();
   float IINaux  = Wire.readStringUntil('|').toFloat();
   int   PINaux  = Wire.readStringUntil('|').toInt(); 
   float VOUTaux = Wire.readStringUntil('|').toFloat();
   float IOUTaux = Wire.readStringUntil('|').toFloat();
-  int   POUTaux = Wire.readStringUntil('|').toInt();
+  int   POUTaux = Wire.readStringUntil('F').toInt();
   
-  if(Wire.readStringUntil('!') == "FIN"){
+//  if(Wire.readStringUntil('!') == "FIN"){
      VIN  = VINaux;
      IIN  = IINaux;
      PIN  = PINaux;
      VOUT = VOUTaux;
      IOUT = IOUTaux;
      POUT = POUTaux;
- 
-     Serial.print("VIN: ");
-     Serial.print(VIN);
-     Serial.print(" | IIN: ");
-     Serial.print(IIN);
-     Serial.print(" | PIN: ");
-     Serial.print(PIN);
-     Serial.print(" | VOUT: ");
-     Serial.print(VOUT);
-     Serial.print(" | IOUT: ");
-     Serial.print(IOUT);
-     Serial.print(" | POUT: ");
-     Serial.println(POUT);
-  }
-  else
-  {
-    Serial.println("OJO.. La lectura de la trama no tiene el FIN de transmisión !!!");
-    displayWarningErrorMedicion();
-  }
+//  }
+//  else
+//  {
+//    Serial.println("OJO.. La lectura de la trama no tiene el FIN de transmisión !!!");
+//    displayWarningErrorMedicion();
+//    delay(1000);
+//  }
 
 
   Serial.print("VIN: ");
