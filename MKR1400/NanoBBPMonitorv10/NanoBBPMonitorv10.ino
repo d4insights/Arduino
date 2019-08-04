@@ -23,7 +23,7 @@
 //--------------------------------------------------------------------------------------------------------------
 //Tiempo entre lecturas
 //
-#define BANDA 5000
+#define BANDA 10000
 //--------------------------------------------------------------------------------------------------------------
 //String de la trama- Comunicacion con el MKR1400 GSM
 //
@@ -65,11 +65,11 @@ bool validacion = 0;
 //--------------------------------------------------------------------------------------------------------------
 //Valores de CALIBRACION
 //
-double VICAL = 252.30;
-double IICAL = 1.2;          //1.817516;
-double VOCAL = 260.60;
-double IOCAL = 1.25;         //1.9337643;
-double POCAL = 0.9317;
+double VICAL = 254.05528;            // Setup Inicial: 254.05 (mas o menos 1 punto es 1 volt)
+double IICAL = 2.54;                 // Setup Inicial: 2.54 (mas o menos 0,2 es 0,2 ampers)
+double VOCAL = 262.143690;           // Setup Inicial: 262.14  (mas o menos 1 punto es 1 volt)
+double IOCAL = 2.43;                 // Setup Inicial: 2.43 (mas o menos 0,2 es 0,2 ampers)
+double POCAL = 0.95204;
 double PICAL = 1;
 int supply_voltage = 5000;
 double VI_RATIO = VICAL * ((supply_voltage / 1000.0) / 1023.0);
@@ -302,10 +302,11 @@ void generoTramaI2C() {
 
 
 
-  dataFileName = String(VI, 2) + "|" + String(II, 2) + "|" + String(round(PIN)) + "|" + String(VO, 2) + "|" + String(IO, 2) + "|" + String(round(POUT)) + "|" + "FIN!";
-  Serial.print("'");
+  dataFileName = String(VI, 2) + "|" + String(II, 2) + "|" + String(round(PIN)) + "|" + String(VO, 2) + "|" + String(IO, 2) + "|" + String(round(POUT)) + "F";
   Serial.print(dataFileName);
   Serial.println("'");
   Serial.println("| VI | II | PI | VO | IO | PO | VALIDACION");
   Serial.println();
+
+  
 }
