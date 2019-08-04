@@ -43,7 +43,7 @@ void sendRequestACModule(){
   int   PINaux  = Wire.readStringUntil('|').toInt(); 
   float VOUTaux = Wire.readStringUntil('|').toFloat();
   float IOUTaux = Wire.readStringUntil('|').toFloat();
-  int   POUTaux = Wire.readStringUntil('F').toInt();
+  int   POUTaux = Wire.readStringUntil('|').toInt();
   
 //  if(Wire.readStringUntil('!') == "FIN"){
      VIN  = VINaux;
