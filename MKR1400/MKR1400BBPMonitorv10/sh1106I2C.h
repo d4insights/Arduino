@@ -558,11 +558,9 @@ void displayBatteriesLevel(){
   else
     u8g2.drawStr(32,35,"0");
 
-<<<<<<< HEAD
-  u8g2.drawStr(32,58,porc);          
-=======
-  u8g2.drawStr(32,58,porc);          /// Fijate si lo manda
->>>>>>> 294d54ed0444d3a411a7043a98a93adb6e4c9440
+
+  u8g2.drawStr(32,58,porc);          /// Fijate si lo manda ahora
+
     
   u8g2.sendBuffer();         
 }
