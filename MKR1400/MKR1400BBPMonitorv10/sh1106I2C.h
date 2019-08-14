@@ -558,7 +558,7 @@ void displayBatteriesLevel(){
   else
     u8g2.drawStr(32,35,"0");
 
-  u8g2.drawStr(32,58,porc);          /// Cambiar después por el cálculo
+  u8g2.drawStr(32,58,porc);          /// Fijate si lo manda
     
   u8g2.sendBuffer();         
 }
