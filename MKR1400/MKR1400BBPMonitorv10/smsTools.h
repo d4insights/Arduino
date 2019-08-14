@@ -22,7 +22,7 @@ unsigned long ultimoSMSInversorBatery  = 1800000;               // Auxiliar para
 long intervalSMSInversorBatery         = 1800000;               // Manejo del período de tiempo entre SMS (así manda cada 30 min)
 
 unsigned long ultimoSMSRed            = 1800000;                // Auxiliar para no mandar SMS todo el tiempo ante un fallo 
-long intervalSMSRed                   = 1000000;                // Manejo del período de tiempo entre SMS (así manda cada 30 min)
+long intervalSMSRed                   = 1800000;                // Manejo del período de tiempo entre SMS (así manda cada 30 min)
 
 
 #include <MKRGSM.h>
