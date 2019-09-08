@@ -536,7 +536,7 @@ void displayBatteriesLevel(){
   aux.toCharArray(bat01,10);
 
   char porc[10];                              // Porcentaje de Batería disponible
-  String aux1= String(porcBat,1);
+  String aux1= String(porcBat,0);
   aux1.toCharArray(porc,10);
   
   displayBorraBodyPantalla();
@@ -549,7 +549,7 @@ void displayBatteriesLevel(){
 
   
   u8g2.drawStr(90,35,"Volts");
-  //u8g2.drawStr(90,58,"%Carga");
+  u8g2.drawStr(90,58,"%Carga");
   
   u8g2.drawLine(20, 25, 20, 55); 
   u8g2.setFont(u8g2_font_fub14_tn);   
@@ -560,14 +560,8 @@ void displayBatteriesLevel(){
   else
     u8g2.drawStr(32,35,"0");
 
-  if(bateria01<13.2)
-  {
-      u8g2.drawStr(32,58,porc);          /// Fijate si lo manda ahora 
-      u8g2.drawStr(90,58,"%Carga");
-  } else 
-      u8g2.setFont(u8g2_font_6x10_tf);
-      u8g2.drawStr(32,58,"  Modo Carga");
-     
+
+  u8g2.drawStr(32,58,porc);                     /// Fijate si lo manda ahora    
   u8g2.sendBuffer();         
 }
 

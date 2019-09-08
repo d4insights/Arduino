@@ -206,6 +206,7 @@ void loop() {
         //
 
         medicionDCNormalizada();
+        //bateria01 = readADCVoltaje(2);
 //
 //        if((bateria01 < 11.0 || bateria02 < 11.0 || bateria03 < 11.0 || bateria03 < 11.0)  && alertaSMS){
 //          iconSMS = "OUT";

@@ -85,7 +85,7 @@ float readADCVoltaje(int pin){
   float voltage = 0.0;
   
 //  float coef05V = 4.5714;                   // Coeficiente Multiplicador del divisor resistivo 5V
-  float coef12V = 14.3021393651;                  // Coeficiente Multiplicador del divisor resistivo 12V (Aprox.: 14.359120)
+  float coef12V = 14.10;                      // Coeficiente Multiplicador del divisor resistivo 12V (Aprox.:14.3021393651 )
   
   analogReadResolution(12);                   // Aumenta la precisión de la pata abalogina de 0-1023 a 0-4096  
   delay(100);                                 // Espero a que se nivele antes de medir  
@@ -96,14 +96,14 @@ float readADCVoltaje(int pin){
   
 //  if (pin == 0)
 //      voltage =  (aux * (coef05V / 4095.0)) + mydeltaBAT0.toFloat();
-//  if (pin == 1)
-//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT4.toFloat();
-//  if (pin == 2)
-//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT3.toFloat();
-//  if (pin == 3)
-//      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT2.toFloat();
-  if (pin == 4)
+  if (pin == 1)
       voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT1.toFloat();
+  if (pin == 2)
+      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT2.toFloat();
+  if (pin == 3)
+      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT3.toFloat();
+  if (pin == 4)
+      voltage =  (aux * (coef12V / 4095.0)) + mydeltaBAT4.toFloat();
   
 //  Serial.print("BAT");
 //  Serial.print(pin);
@@ -125,10 +125,10 @@ float readADCVoltaje(int pin){
 void muestreoTensionDC(){
 
   //voltageArray00[pVoltageArray] = readADCVoltaje(0);
-  voltageArray01[pVoltageArray] = readADCVoltaje(4);
-  //voltageArray02[pVoltageArray] = readADCVoltaje(3);
-  //voltageArray03[pVoltageArray] = readADCVoltaje(2);
-  //voltageArray04[pVoltageArray] = readADCVoltaje(1);
+    voltageArray01[pVoltageArray] = readADCVoltaje(2);
+  //voltageArray02[pVoltageArray] = readADCVoltaje(2);
+  //voltageArray03[pVoltageArray] = readADCVoltaje(3);
+  //voltageArray04[pVoltageArray] = readADCVoltaje(4);
 
   //Serial.print("Muestreo DC: ");
   //Serial.print(pVoltageArray);
@@ -187,8 +187,21 @@ void medicionDCNormalizada(){
 
   
   // Cálculo del Porcentaje de baterías restante
-  porcBat = map(bateria01, 10.5, 12.6, 0.0, 100.0);
-   
+  if (bateria01 < 10.5)
+  {  
+     porcBat = 0.0;
+  }
+  else
+  {   
+     if(bateria01 > 12.6)
+     {
+        porcBat = 100.0;
+     }
+     else
+     {
+        porcBat = map(bateria01, 10.5, 12.6, 0.0, 100.0);
+     }
+  }
 
   // Cálculo del tiempo de baterías (APROXIMACION)
   // Hay que definir el cálculo 
