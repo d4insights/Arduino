@@ -206,7 +206,7 @@ void loop() {
         //
 
         medicionDCNormalizada();
-        //bateria01 = readADCVoltaje(2);
+        
 //
 //        if((bateria01 < 11.0 || bateria02 < 11.0 || bateria03 < 11.0 || bateria03 < 11.0)  && alertaSMS){
 //          iconSMS = "OUT";
@@ -226,7 +226,7 @@ void loop() {
 //          registraAlertaDB("M","DC", String(MIN,2), "BAJA_CARGA_Bateria_de_Soporte_Inversor");
 //        }        
         displayBatteriesLevel();
-         
+        delay(1500); 
 
       
         // Handler Bateria de Contingencia

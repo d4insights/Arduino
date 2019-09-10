@@ -187,21 +187,20 @@ void medicionDCNormalizada(){
 
   
   // Cálculo del Porcentaje de baterías restante
-  if (bateria01 < 10.5)
-  {  
-     porcBat = 0.0;
-  }
-  else
-  {   
-     if(bateria01 > 12.6)
-     {
-        porcBat = 100.0;
-     }
-     else
-     {
-        porcBat = map(bateria01, 10.5, 12.6, 0.0, 100.0);
-     }
-  }
+  
+  
+  //porcBat = map(bateria01, 10.5, 12.6, 0.0, 100.0);
+
+  porcBat = ((( (float)bateria01 - 10.5f)) / 2.1f) * 100.0f ;
+  
+  if (porcBat > 100.0f)
+     porcBat = 100.0f;
+  if (porcBat < 0.0f)
+     porcBat = 0.0f;
+     
+  
+  
+
 
   // Cálculo del tiempo de baterías (APROXIMACION)
   // Hay que definir el cálculo 

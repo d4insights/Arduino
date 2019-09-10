@@ -536,7 +536,7 @@ void displayBatteriesLevel(){
   aux.toCharArray(bat01,10);
 
   char porc[10];                              // Porcentaje de Batería disponible
-  String aux1= String(porcBat,0);
+  String aux1= String(porcBat,1);
   aux1.toCharArray(porc,10);
   
   displayBorraBodyPantalla();
